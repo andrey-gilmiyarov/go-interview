@@ -1,0 +1,18 @@
+# Локальные конфиги и переменные окружения — шаблоны остаются в репозитории
+.env.*
+!.env.example
+/config.json
+/config.local.json
+/configs/*.local.json
+/configs/launchd/*.local.plist
+
+# Скомпилированные бинарники
+/backtest
+/cachefreeze
+/costcheck
+/bin
+*.exe
+*.test
+
+# macOS
+.DS_Store

@@ -1,0 +1,31 @@
+# Project-level Codex runtime configuration.
+#
+# Intended topology:
+#   User-selected root model (Astra recommended; Lead / architect / reviewer)
+#            |
+#            +--> GPT-6 Luna worker(s)
+#
+# AGENTS.md and docs/agent-workflow.md define the workflow policy.
+# This file configures the runtime defaults and registers the Luna worker.
+# The root model and reasoning effort are selected by the user in the app for
+# each session; this project does not pin them.
+
+[agents]
+# Enable multi-agent execution for this project.
+enabled = true
+
+# Allow a small amount of parallel implementation work.
+# Increase only if your repository/tasks are sufficiently independent.
+max_concurrent_threads_per_session = 4
+
+# Fallback routing for spawned agents without explicit model/effort selection.
+# Implementation tasks still require explicit agent_type="luna-worker".
+default_subagent_model = "gpt-6-luna"
+default_subagent_reasoning_effort = "max"
+
+# Register the explicit implementation-worker role.
+#
+# Relative paths are resolved from this config.toml in current Codex builds.
+[agents.luna-worker]
+description = "Bounded implementation worker. Explicitly dispatched by the Lead and reused for review-driven rework."
+config_file = "agents/luna-worker.toml"
