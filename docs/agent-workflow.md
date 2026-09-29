@@ -43,6 +43,15 @@ ACCEPTED, after which the Lead performs the final integration review.
 Task states are `PLANNED`, `READY`, `IN_PROGRESS`, `REVIEW`, `REWORK`,
 `BLOCKED`, `ACCEPTED`, and `CANCELLED`.
 
+## Plan file convention
+
+The Lead creates a new, uniquely named `YYYY-MM-DD-topic.md` file in
+`docs/plans/` for each plan. Never create or overwrite a shared
+`docs/active-plan.md`. Link every plan from [docs/README.md](README.md), and
+keep a completed plan at the same path while updating its status. This
+repository convention overrides skill and tool defaults for plan paths,
+including `docs/active-plan.md` and `docs/superpowers/plans/`.
+
 Parallel tasks may run only after their dependencies are satisfied and when
 their file ownership does not overlap. The Lead serializes or coordinates
 changes to shared files. Every task contract states exact ownership, and each

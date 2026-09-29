@@ -28,6 +28,16 @@ The workflow is defined in [docs/agent-workflow.md](docs/agent-workflow.md).
   performs the final integration review.
 - Read-only answers and repository research do not require delegation.
 
+## Plan file convention
+
+- The Lead creates a new, uniquely named `YYYY-MM-DD-topic.md` file in
+  `docs/plans/` for each plan; never create or overwrite a shared
+  `docs/active-plan.md`.
+- Link every plan from [docs/README.md](docs/README.md). Keep a completed plan
+  at the same path and update its status.
+- This repository convention overrides any skill or tool default for plan
+  paths, including `docs/active-plan.md` and `docs/superpowers/plans/`.
+
 ## Repository map
 
 - [Agent workflow](docs/agent-workflow.md) — roles, task contract, lifecycle,

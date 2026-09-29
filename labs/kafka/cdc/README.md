@@ -13,7 +13,7 @@
 | `kraft` | `4.3.1`, KRaft | Образ Debezium `3.6.3`; REST сообщает Kafka Connect `4.3.0`, plugin `3.6.3.Final` | broker `127.0.0.1:49092`, PostgreSQL `127.0.0.1:25432`, Connect REST `127.0.0.1:18083` | Отдельный изолированный project и volumes |
 | `zk` | `3.9.2`, ZooKeeper | Тот же образ и версии Connect runtime/plugin; consumer integration и полный E2E пройдены | broker `127.0.0.1:59092`, PostgreSQL `127.0.0.1:35432`, Connect REST `127.0.0.1:28083` | Другой project и volumes, не общие с `kraft` или polling |
 
-Версия Connect runtime не совпадает с версией broker: в основной среде это `4.3.0` против Kafka `4.3.1`. Connect REST обеих сред сообщает plugin `io.debezium.connector.postgresql.PostgresConnector` версии `3.6.3.Final`. Compose закрепляет образ `quay.io/debezium/connect:3.6.3` digest `sha256:5638e8e42c6681d1dfd753324040b7949e3cfe3f8f3aff1e39fc8c0b63c6ccec`; для Connect задан heap `-Xms512m -Xmx1g`, чтобы JVM могла просканировать bundled plugins. Инфраструктурная readiness, consumer integration и полные E2E/fault-сценарии пройдены для обеих сред. Подробные результаты, включая initial OOM и исправление, записаны в `docs/cdc-verification.md` репозитория.
+Версия Connect runtime не совпадает с версией broker: в основной среде это `4.3.0` против Kafka `4.3.1`. Connect REST обеих сред сообщает plugin `io.debezium.connector.postgresql.PostgresConnector` версии `3.6.3.Final`. Compose закрепляет образ `quay.io/debezium/connect:3.6.3` digest `sha256:5638e8e42c6681d1dfd753324040b7949e3cfe3f8f3aff1e39fc8c0b63c6ccec`; для Connect задан heap `-Xms512m -Xmx1g`, чтобы JVM могла просканировать bundled plugins. Инфраструктурная readiness, consumer integration и полные E2E/fault-сценарии пройдены для обеих сред. Подробные результаты, включая initial OOM и исправление, записаны в `docs/reports/cdc-verification.md` репозитория.
 
 Запускайте команды из `labs/kafka`:
 
@@ -196,7 +196,7 @@ go run ./cmd/cdc consume -projection "$projection" -count 1
 
 Для `zk` замените REST endpoint на `http://127.0.0.1:28083` и перед командой восстановления убедитесь, что выбранная Compose-среда запущена. После восстановления снова проверяйте projection и consumer-group lag; не удаляйте состояние для обхода ошибки.
 
-Этот сценарий объясняет CDC как альтернативу polling. Он не переключает polling publisher, не задаёт cutover/replay-план для production и не обещает сохранность всей истории после истечения retention. Smoke-сценарий заказа и повторной команды, инфраструктурные проверки и полные E2E/fault-сценарии обеих сред прошли; подробности находятся в `docs/cdc-verification.md` репозитория.
+Этот сценарий объясняет CDC как альтернативу polling. Он не переключает polling publisher, не задаёт cutover/replay-план для production и не обещает сохранность всей истории после истечения retention. Smoke-сценарий заказа и повторной команды, инфраструктурные проверки и полные E2E/fault-сценарии обеих сред прошли; подробности находятся в `docs/reports/cdc-verification.md` репозитория.
 
 ## Самопроверка
 
