@@ -37,7 +37,10 @@ export default defineConfig({
         {
           text: 'Лаборатория',
           collapsed: false,
-          items: [{ text: 'Запуск и сценарии', link: '/kafka/lab' }],
+          items: [
+            { text: 'Запуск и сценарии', link: '/kafka/lab' },
+            { text: 'CDC: Debezium и Kafka Connect', link: '/kafka/cdc-lab' },
+          ],
         },
       ],
       '/practice/': [

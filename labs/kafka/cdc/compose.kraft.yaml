@@ -1,0 +1,100 @@
+name: kafka-cdc-kraft
+
+services:
+  broker:
+    image: apache/kafka:4.3.1
+    hostname: broker
+    environment:
+      CLUSTER_ID: "A8d3P5s3T2W7xN6mQ1v4Rg"
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@broker:29093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENERS: CONTROLLER://:29093,INTERNAL://:19093,CONNECT://:29092,EXTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://broker:19093,CONNECT://broker:29092,EXTERNAL://127.0.0.1:49092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,CONNECT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_MIN_INSYNC_REPLICAS: "1"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_HEAP_OPTS: -Xms512m -Xmx512m
+    ports:
+      - "127.0.0.1:49092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+      - ./init/kafka-admin.properties:/mnt/shared/config/admin.properties:ro
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server broker:29092 --list >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  postgres:
+    image: postgres:17.6
+    command:
+      - postgres
+      - -c
+      - wal_level=logical
+      - -c
+      - max_replication_slots=4
+      - -c
+      - max_wal_senders=4
+      - -c
+      - max_slot_wal_keep_size=256MB
+    environment:
+      POSTGRES_DB: cdc_lab
+      POSTGRES_USER: cdc_admin
+      POSTGRES_PASSWORD: cdc_admin
+    ports:
+      - "127.0.0.1:25432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init/00-roles.sql:/docker-entrypoint-initdb.d/00-roles.sql:ro
+      - ./schema.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+      - ./init/20-grants-publication.sql:/docker-entrypoint-initdb.d/20-grants-publication.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cdc_admin -d cdc_lab"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+
+  connect:
+    image: quay.io/debezium/connect:3.6.3@sha256:5638e8e42c6681d1dfd753324040b7949e3cfe3f8f3aff1e39fc8c0b63c6ccec
+    hostname: connect
+    depends_on:
+      broker:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      BOOTSTRAP_SERVERS: broker:29092
+      GROUP_ID: cdc-kraft-connect
+      CONFIG_STORAGE_TOPIC: cdc-kraft-connect-configs
+      CONFIG_STORAGE_REPLICATION_FACTOR: "1"
+      OFFSET_STORAGE_TOPIC: cdc-kraft-connect-offsets
+      OFFSET_STORAGE_PARTITIONS: "1"
+      OFFSET_STORAGE_REPLICATION_FACTOR: "1"
+      STATUS_STORAGE_TOPIC: cdc-kraft-connect-status
+      STATUS_STORAGE_PARTITIONS: "1"
+      STATUS_STORAGE_REPLICATION_FACTOR: "1"
+      KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+      REST_ADVERTISED_HOST_NAME: connect
+      REST_ADVERTISED_PORT: "8083"
+      KAFKA_HEAP_OPTS: -Xms512m -Xmx1g
+    ports:
+      - "127.0.0.1:18083:8083"
+    volumes:
+      - connect_data:/kafka/data
+
+volumes:
+  kafka_data:
+  postgres_data:
+  connect_data:

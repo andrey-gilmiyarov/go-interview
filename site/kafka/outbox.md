@@ -14,7 +14,9 @@ Polling lifecycle состоит из двух системных шагов. Pu
 
 Глава не утверждает, что текущая лаборатория запускает несколько publisher-ов или проверяет их порядок. При горизонтальном масштабировании наивные независимые poller-ы могут отправить события одного заказа не в порядке создания. Kafka key упорядочит только фактическую последовательность append в одной партиции; последовательность выдачи из БД и отправки до Kafka нужно защищать отдельно, например sequence/version заказа и согласованным механизмом публикации.
 
-CDC — альтернативный механизм чтения outbox, а не переключение одного флага в polling коде. Debezium PostgreSQL connector читает logical decoding/WAL через replication slot; slot удерживает нужные WAL segments во время простоя, поэтому нужно следить за диском и восстановлением. Outbox Event Router ожидает INSERT-события outbox определённого формата и имеет правила для UPDATE/DELETE, поэтому текущая polling-схема с обновлением статуса публикации потребовала бы адаптации таблицы, connector/router config, cutover, replay и дедупликации. В этой лаборатории Debezium и Kafka Connect не запускаются: CDC только обозначает будущее направление.
+CDC — отдельный механизм чтения outbox, а не переключение одного флага в polling-коде. В [CDC-лаборатории](/kafka/cdc-lab) Debezium PostgreSQL connector читает logical decoding/WAL через отдельный replication slot; slot удерживает WAL во время простоя, поэтому нужно следить за его объёмом и восстановлением connector. Kafka Connect запускает Outbox Event Router, который преобразует вставку outbox в событие для Kafka. Исходный Debezium change event имеет свою connector-форму; JSON payload в README CDC-лаборатории описывает контракт приложения после Router, а не необработанное представление connector record. Эти правила сверяются с [документацией Debezium 3.6 по PostgreSQL connector](https://debezium.io/documentation/reference/3.6/connectors/postgresql.html) и [Outbox Event Router](https://debezium.io/documentation/reference/3.6/transformations/outbox-event-router.html).
+
+CDC-сценарий использует отдельные Compose projects, базу и insert-only outbox. Текущий polling publisher и его `published_at` остаются без изменений. Новая лаборатория показывает версии заказа, inbox, replay и WAL recovery на одном заказе; это учебное сравнение двух путей доставки, а не production cutover или миграция polling-системы.
 
 ## Пример
 
@@ -70,6 +72,6 @@ Key направляет отправленные записи в одну па�
 - [Kafka 4.3: Design — delivery semantics](https://kafka.apache.org/43/design/design/)
 - [Kafka 3.9: Design](https://kafka.apache.org/39/design/design/)
 - [PostgreSQL 17: транзакции](https://www.postgresql.org/docs/17/tutorial-transactions.html)
-- [Debezium: PostgreSQL connector, logical decoding и replication slots](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
-- [Debezium: Outbox Event Router](https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html)
+- [Debezium 3.6: PostgreSQL connector, logical decoding и replication slots](https://debezium.io/documentation/reference/3.6/connectors/postgresql.html)
+- [Debezium 3.6: Outbox Event Router](https://debezium.io/documentation/reference/3.6/transformations/outbox-event-router.html)
 - [franz-go v1.22.1: kgo API](https://pkg.go.dev/github.com/twmb/franz-go@v1.22.1/pkg/kgo)

@@ -1,0 +1,107 @@
+name: kafka-cdc-zk
+
+services:
+  zookeeper:
+    image: zookeeper:3.9.3
+    environment:
+      ZOO_4LW_COMMANDS_WHITELIST: ruok
+    volumes:
+      - zookeeper_data:/data
+      - zookeeper_datalog:/datalog
+    healthcheck:
+      test: ["CMD", "zkServer.sh", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  broker:
+    image: apache/kafka:3.9.2
+    hostname: broker
+    # Launch Kafka 3.9 in ZooKeeper mode, not the image wrapper's KRaft default.
+    entrypoint: ["/opt/kafka/bin/kafka-server-start.sh"]
+    command: ["/mnt/shared/config/server.properties"]
+    environment:
+      KAFKA_HEAP_OPTS: -Xms512m -Xmx512m
+    ports:
+      - "127.0.0.1:59092:9092"
+    volumes:
+      - ./init/kafka-zk.properties:/mnt/shared/config/server.properties:ro
+      - ./init/kafka-admin.properties:/mnt/shared/config/admin.properties:ro
+      - kafka_data:/var/lib/kafka/data
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server broker:19093 --list >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  postgres:
+    image: postgres:17.6
+    command:
+      - postgres
+      - -c
+      - wal_level=logical
+      - -c
+      - max_replication_slots=4
+      - -c
+      - max_wal_senders=4
+      - -c
+      - max_slot_wal_keep_size=256MB
+    environment:
+      POSTGRES_DB: cdc_lab
+      POSTGRES_USER: cdc_admin
+      POSTGRES_PASSWORD: cdc_admin
+    ports:
+      - "127.0.0.1:35432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init/00-roles.sql:/docker-entrypoint-initdb.d/00-roles.sql:ro
+      - ./schema.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+      - ./init/20-grants-publication.sql:/docker-entrypoint-initdb.d/20-grants-publication.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cdc_admin -d cdc_lab"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+
+  connect:
+    image: quay.io/debezium/connect:3.6.3@sha256:5638e8e42c6681d1dfd753324040b7949e3cfe3f8f3aff1e39fc8c0b63c6ccec
+    hostname: connect
+    depends_on:
+      broker:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      BOOTSTRAP_SERVERS: broker:19093
+      GROUP_ID: cdc-zk-connect
+      CONFIG_STORAGE_TOPIC: cdc-zk-connect-configs
+      CONFIG_STORAGE_REPLICATION_FACTOR: "1"
+      OFFSET_STORAGE_TOPIC: cdc-zk-connect-offsets
+      OFFSET_STORAGE_PARTITIONS: "1"
+      OFFSET_STORAGE_REPLICATION_FACTOR: "1"
+      STATUS_STORAGE_TOPIC: cdc-zk-connect-status
+      STATUS_STORAGE_PARTITIONS: "1"
+      STATUS_STORAGE_REPLICATION_FACTOR: "1"
+      KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+      REST_ADVERTISED_HOST_NAME: connect
+      REST_ADVERTISED_PORT: "8083"
+      KAFKA_HEAP_OPTS: -Xms512m -Xmx1g
+    ports:
+      - "127.0.0.1:28083:8083"
+    volumes:
+      - connect_data:/kafka/data
+
+volumes:
+  zookeeper_data:
+  zookeeper_datalog:
+  kafka_data:
+  postgres_data:
+  connect_data:

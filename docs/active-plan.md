@@ -1,0 +1,19 @@
+# Текущий план работ
+
+Дата обновления: 2026-09-30.
+
+## Этап: CDC-лаборатория Debezium
+
+**Статус: COMPLETE; принято Lead 2026-09-30.** Пользователь утвердил `quay.io/debezium/connect:3.6.3` с digest `sha256:5638e8e42c6681d1dfd753324040b7949e3cfe3f8f3aff1e39fc8c0b63c6ccec` для `linux/amd64` и `linux/arm64`. Дизайн сохранён в [спецификации CDC-лаборатории](superpowers/specs/2026-09-29-cdc-lab-design.md); команды, результаты и известные ограничения собраны в [отчёте верификации](cdc-verification.md).
+
+Исторически первым целевым тегом был `3.7.0.Final`, которого нет в реестре. После явного решения пользователя версия изменена на `3.6.3` и закреплена указанным digest.
+
+В обеих средах Connect REST подтвердил runtime Kafka Connect `4.3.0` и PostgreSQL connector plugin `3.6.3.Final`; Compose readiness, consumer integration и полные E2E/fault-сценарии прошли. Ручной smoke-сценарий `1000 → 1500 → 1200` в `kraft` достиг projection версии `3`; повтор команды создания с тем же ID после обновлений вернул исходное событие. Для Connect установлен heap `-Xms512m -Xmx1g`: это устранило OOM при сканировании bundled plugins без смены выбранного образа.
+
+Изолированная инфраструктура, модель заказов/outbox, Connect, последовательный CDC-consumer, CLI, fault-сценарии и сайт реализованы и приняты. PostgreSQL model integration проверялась на основной базе с отдельной тестовой схемой; consumer integration и E2E прогнаны с обоими Kafka brokers.
+
+Лаборатория остаётся отдельной частью `labs/kafka`; существующая polling-модель сохраняется. Lead владеет исследованиями, решениями об интерфейсах, распределением файлов и приёмкой. Ограниченные задачи реализации передаются Luna через `agent_type="luna-worker"` и `fork_turns="none"`; исправления review выполняет та же Luna-сессия. Коммиты, staging и push не выполнять.
+
+Итоговые Compose, Go unit/race/build, root Go, E2E, browser и Git-проверки выполнены; `npm run test:site` и `npm run docs:build` прошли. `npm run docs:check` по-прежнему выводит 35 pre-existing unresolved paths в старых migration-документах и README; новых ошибок CDC нет, ссылки вне scope не менялись. Lead выполнил `down` для обоих CDC projects; containers удалены, все named volumes сохранены.
+
+Предыдущий этап Kafka handbook и polling outbox завершён; его исходный план сохранён в [плане Kafka handbook](plans/kafka-handbook.md), подтверждения проверок — в [отчёте о приёмке Kafka](kafka-verification.md).
