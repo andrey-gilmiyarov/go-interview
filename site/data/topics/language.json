@@ -1,0 +1,125 @@
+[
+  {
+    "id": "values-pointers",
+    "title": "Значения и указатели",
+    "group": "language",
+    "order": 1,
+    "summary": "Копирование значений, адреса переменных и общая изменяемая память.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Pointer_types",
+      "https://go.dev/ref/spec#Address_operators",
+      "https://go.dev/doc/faq#pass_by_value",
+      "https://pkg.go.dev/encoding/json#Marshal"
+    ],
+    "exercises": [
+      "typed-nil"
+    ]
+  },
+  {
+    "id": "slices",
+    "title": "Срезы",
+    "group": "language",
+    "order": 2,
+    "summary": "Длина и емкость, общий массив, append, копирование и nil-срезы.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Slice_types",
+      "https://go.dev/blog/slices-intro",
+      "https://pkg.go.dev/slices#Clone",
+      "https://pkg.go.dev/slices#Equal",
+      "https://pkg.go.dev/encoding/json#Marshal",
+      "https://pkg.go.dev/encoding/json#Unmarshal"
+    ],
+    "exercises": [
+      "slice-alias",
+      "nil-empty-json",
+      "range-mutation"
+    ]
+  },
+  {
+    "id": "maps",
+    "title": "Карты",
+    "group": "language",
+    "order": 3,
+    "summary": "Сравнимость ключей, нулевая карта, поиск, обход и конкурентные изменения.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Map_types",
+      "https://go.dev/ref/spec#For_range",
+      "https://go.dev/ref/spec#Comparison_operators",
+      "https://pkg.go.dev/encoding/json#Marshal"
+    ],
+    "exercises": [
+      "map-iteration"
+    ]
+  },
+  {
+    "id": "strings-runes",
+    "title": "Строки и руны",
+    "group": "language",
+    "order": 4,
+    "summary": "Байты UTF-8, декодирование rune и безопасная сборка текста.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#String_types",
+      "https://go.dev/blog/strings",
+      "https://pkg.go.dev/unicode/utf8",
+      "https://pkg.go.dev/encoding/json#Marshal"
+    ],
+    "exercises": [
+      "allocations"
+    ]
+  },
+  {
+    "id": "control-range",
+    "title": "Управляющие конструкции и range",
+    "group": "language",
+    "order": 5,
+    "summary": "Границы циклов, источники range и версия семантики переменных итерации.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#For_statements",
+      "https://go.dev/doc/go1.22#language",
+      "https://go.dev/doc/go1.23#language"
+    ],
+    "exercises": [
+      "range-mutation",
+      "loop-closures"
+    ]
+  },
+  {
+    "id": "functions-closures",
+    "title": "Функции и замыкания",
+    "group": "language",
+    "order": 6,
+    "summary": "Функциональные значения, захват переменных и состояние callback.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Function_literals",
+      "https://go.dev/ref/spec#Function_types",
+      "https://go.dev/ref/spec#Declarations_and_scope",
+      "https://go.dev/doc/go1.22#language"
+    ],
+    "exercises": [
+      "loop-closures"
+    ]
+  },
+  {
+    "id": "defer-panic-recover",
+    "title": "defer, panic и recover",
+    "group": "language",
+    "order": 7,
+    "summary": "Отложенные вызовы, раскрутка panic и границы восстановления.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Defer_statements",
+      "https://go.dev/ref/spec#Handling_panics",
+      "https://go.dev/blog/defer-panic-and-recover"
+    ],
+    "exercises": [
+      "defer-order",
+      "named-return"
+    ]
+  }
+]

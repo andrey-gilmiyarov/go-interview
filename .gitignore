@@ -16,3 +16,8 @@
 
 # macOS
 .DS_Store
+
+# Локальная документация
+/node_modules/
+/site/.vitepress/cache/
+/site/.vitepress/dist/

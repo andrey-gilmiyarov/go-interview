@@ -1,0 +1,75 @@
+:root {
+  --vp-c-brand-1: #315f98;
+  --vp-c-brand-2: #285181;
+  --vp-c-brand-3: #1f426b;
+  --vp-c-brand-soft: rgb(49 95 152 / 12%);
+  --vp-font-family-base: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --vp-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.dark {
+  --vp-c-brand-1: #91b9ea;
+  --vp-c-brand-2: #a8c9f0;
+  --vp-c-brand-3: #c0daf5;
+  --vp-c-brand-soft: rgb(145 185 234 / 14%);
+  --vp-button-brand-text: #102033;
+  --vp-button-brand-hover-text: #102033;
+  --vp-button-brand-active-text: #102033;
+}
+
+.vp-doc p,
+.vp-doc li {
+  line-height: 1.72;
+}
+
+.vp-doc h2 {
+  margin-top: 2.8rem;
+  padding-top: 1.3rem;
+}
+
+.topic-meta {
+  margin: 0 0 1.75rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+}
+
+.topic-meta__summary {
+  margin: 0;
+  color: var(--vp-c-text-1);
+  font-size: 0.98rem;
+}
+
+.topic-meta__version {
+  display: inline-block;
+  margin-top: 0.65rem;
+  color: var(--vp-c-text-2);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.vp-doc details {
+  margin: 1rem 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 10px;
+  background: var(--vp-c-bg-soft);
+}
+
+.vp-doc details > summary {
+  color: var(--vp-c-brand-1);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .vp-doc p,
+  .vp-doc li {
+    line-height: 1.65;
+  }
+
+  .topic-meta {
+    padding: 0.85rem 1rem;
+  }
+}

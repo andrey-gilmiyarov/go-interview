@@ -1,0 +1,45 @@
+# Выбранные источники
+
+Каталог — маршрут по первичной документации Go и нескольким полезным объяснениям для будущего backend-раздела. Официальная спецификация и документация определяют поведение языка и API; сторонний материал помогает увидеть пример или инженерный компромисс. Ссылка в списке не означает, что весь курс, книга или сайт постатейно проверен или перенесён в справочник.
+
+Версионные факты проверяйте по документации соответствующего выпуска Go. У старых объяснений про циклы, таймеры, runtime, планировщик и контейнерные лимиты особенно важен контекст версии. Не используйте заголовок ссылки как доказательство того, что соответствующая внутренняя статья уже написана.
+
+| Материал | Для чего открыть | Связанные темы | Тип и статус |
+| --- | --- | --- | --- |
+| [Спецификация языка Go](https://go.dev/ref/spec) | Нормативные правила типов, циклов, методов и выражений | [Язык](/go/language/values-pointers), [range](/go/language/control-range), [интерфейсы](/go/api/interfaces) | Первичный источник |
+| [Модель памяти Go](https://go.dev/ref/mem) | Синхронизация, happens-before и гонки данных | [Модель памяти](/go/concurrency/memory-model-atomic), [гонки](/go/testing/race-concurrent-tests) | Первичный источник |
+| [Effective Go](https://go.dev/doc/effective_go) | Историческое вводное руководство по стилю | [Пакеты](/go/api/packages-api), [инструменты](/go/tooling/vet-workflow) | Историческое руководство; не обновлялось для generics и modules, сверяйте актуальную документацию |
+| [Примечания Go 1.27](https://go.dev/doc/go1.27) | Изменения актуального для проекта выпуска | [Версии и toolchain](/go/tooling/toolchain-build) | Первичный источник |
+| [Изменения языка Go 1.22](https://go.dev/doc/go1.22#language) | Версионная граница переменных циклов | [Управление циклом](/go/language/control-range), [замыкания](/go/language/functions-closures) | Первичный источник |
+| [Примечания Go 1.23](https://go.dev/doc/go1.23) | Итераторы, таймеры и поведение release | [range](/go/language/control-range), [таймеры](/go/stdlib/time-timers) | Первичный источник |
+| [Срезы: устройство и использование](https://go.dev/blog/slices-intro) | Базовый массив, заголовок среза и `append` | [Срезы](/go/language/slices) | Официальное объяснение |
+| [Конвейеры и отмена](https://go.dev/blog/pipelines) | Передача данных по каналам и завершение конвейера | [Каналы](/go/concurrency/channels), [контекст](/go/concurrency/context) | Официальное объяснение |
+| [Диагностика Go-программ](https://go.dev/doc/diagnostics) | Сборка профилей и поиск узких мест | [pprof и trace](/go/testing/pprof-trace) | Первичный источник |
+| [Fuzz-тестирование](https://go.dev/doc/security/fuzz/) | Встроенный в Go цикл fuzzing и корпус входов | [Fuzzing](/go/testing/fuzzing) | Первичный источник |
+| [Управление Go-модулями](https://go.dev/doc/modules/managing-dependencies) | Версии модулей и зависимости | [Модули](/go/tooling/modules-dependencies) | Первичный источник |
+| [Индекс стандартной библиотеки](https://pkg.go.dev/std) | Публичные API пакетов стандартной библиотеки | [HTTP](/go/stdlib/net-http), [JSON](/go/stdlib/json), [SQL](/go/stdlib/database-sql) | Первичный источник |
+| [Пакет `testing`](https://pkg.go.dev/testing) | Контракты тестов, fuzzing и бенчмарков | [Тесты](/go/testing/unit-integration), [бенчмарки](/go/testing/benchmarks) | Первичный источник |
+| [100 Go Mistakes](https://100go.co/) | Сверить типовые инженерные ловушки с картой из 100 пунктов | [Покрытие 100 пунктов](./100-go-mistakes.md) | Дополнительное чтение; книга не переписана |
+| [50 Shades of Go](https://golang50shades.com/) | Использовать как набор коротких проверочных примеров | [Карта 66 якорей](./50-shades.md) | Сообщество; сверяйте старые примеры с текущим Go |
+| [Go 101](https://go101.org/) | Дополнительные разборы языка и runtime | [Язык](/go/language/values-pointers), [runtime](/go/runtime/scheduler-netpoll) | Внешний справочник; версии перепроверять |
+| [Practical Go](https://dave.cheney.net/practical-go/presentations/qcon-china.html) | Обсудить дизайн API и качество небольших пакетов | [Пакеты и API](/go/api/packages-api), [ошибки](/go/api/errors) | Доклад; отдельные рекомендации требуют контекста |
+| [Escape analysis](https://www.ardanlabs.com/blog/2017/05/language-mechanics-on-escape-analysis.html) | Понять, почему значения могут пережить вызов функции | [Стек и escape analysis](/go/runtime/stacks-escape) | Старый поясняющий материал; решение компилятора зависит от версии |
+| [Стек и указатели](https://www.ardanlabs.com/blog/2017/05/language-mechanics-on-stacks-and-pointers.html) | Разобрать адресуемость и время жизни значений | [Значения](/go/language/values-pointers), [стек](/go/runtime/stacks-escape) | Старый поясняющий материал; проверяйте актуальную реализацию |
+| [Планировщик Go](https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part1.html) | Получить дополнительную модель планирования горутин | [Планировщик](/go/runtime/scheduler-netpoll), [горутин](/go/concurrency/goroutine-lifecycle) | Историческое объяснение внутренностей runtime |
+| [Сборщик мусора Go](https://www.ardanlabs.com/blog/2018/12/garbage-collection-in-go-part1-semantics.html) | Обсудить стоимость времени жизни ссылок и сборки | [GC](/go/runtime/garbage-collector) | Старый обзор; реализацию сверяйте с release notes |
+| [Go под лимитами Kubernetes](https://www.ardanlabs.com/blog/2024/02/kubernetes-cpu-limits-go.html) | Разобрать CPU quota и число потоков выполнения | [Поздние направления](/roadmap#roadmap-future) | Практический материал; учитывайте обновлённый default GOMAXPROCS |
+| [Go Performance Guide](https://goperf.dev/) | Сформировать измеримый профиль производительности | [Аллокации](/go/runtime/allocations-layout), [профили](/go/testing/pprof-trace) | Внешнее руководство; проверяйте код на своей версии |
+| [Материалы Alex Edwards](https://www.alexedwards.net/blog) | Выборочные примеры для серверной разработки | [Общие backend-задачи](/roadmap#roadmap-common-backend) | Авторские статьи; не прочитаны целиком |
+| [gRPC Quick Start для Go](https://grpc.io/docs/languages/go/quickstart/) | Поднять минимальный внешний RPC-пример | [Общие backend-задачи](/roadmap#roadmap-common-backend) | Официальное руководство gRPC; отдельная тема в плане не заведена |
+| [Ultimate Go Tour](https://tour.ardanlabs.com/tour/eng/list) | Отдельный обучающий маршрут по Go | [Язык](/go/language/values-pointers), [конкурентность](/go/concurrency/channels) | Внешний курс; программа и доступность не проверялись |
+| [Руководство PostgreSQL](https://www.postgresql.org/docs/current/tutorial.html) | Начать с запросов, транзакций и индексов | [Следующий этап: Kafka и PostgreSQL](/roadmap#roadmap-data-platforms) | Официальная документация; часть будущего этапа |
+| [Документация Apache Kafka](https://kafka.apache.org/documentation/) | Изучить брокер, топики, партиции и доставку | [Следующий этап: Kafka и PostgreSQL](/roadmap#roadmap-data-platforms) | Официальная документация; будущая тема |
+| [Документация Redis](https://redis.io/docs/latest/develop/) | Ориентироваться в командах, структурах и клиентах Redis | [Общие backend-задачи](/roadmap#roadmap-common-backend) | Официальная документация; будущая тема |
+| [Docker Get Started](https://docs.docker.com/get-started/) | Отдельно изучить образы и контейнеры | [Контейнеры и лаборатории](/roadmap#roadmap-containers) | Официальное руководство; отдельное направление |
+| [Основы Kubernetes](https://kubernetes.io/docs/tutorials/kubernetes-basics/) | Позже разобрать объектную модель и базовые операции | [Поздние направления](/roadmap#roadmap-future) | Официальное руководство; не часть текущего курса Go |
+| [System Design Primer](https://github.com/donnemartin/system-design-primer#system-design-topics-start-here) | Собрать список вопросов для будущего system design-раздела | [Поздние направления](/roadmap#roadmap-future) | Внешний учебный проект; разбирать после backend-базы |
+| [Microservices.io patterns](https://microservices.io/patterns/microservices.html) | Сверить названия интеграционных и архитектурных шаблонов | [Общие backend-задачи](/roadmap#roadmap-common-backend) | Внешний справочник; полезен как указатель |
+| [Внешний курс Docker](https://ru.hexlet.io/courses/docker-basics) | Возможная дополнительная учебная траектория по контейнерам | [Контейнеры и лаборатории](/roadmap#roadmap-containers) | Курс-кандидат; содержание и доступность не проверялись |
+| [Документация Elastic Stack](https://www.elastic.co/guide/en/elastic-stack/current/index.html) | Справочник по Elasticsearch, Kibana, ingest и наблюдаемости | [Наблюдаемость и ELK](/roadmap#roadmap-observability) | Официальная документация; будущая тема |
+
+Для маршрутов по ошибкам двух внешних коллекций смотрите [карту 100 практических пунктов](./100-go-mistakes.md) и [карту 66 тематических якорей](./50-shades.md). Они не заменяют статью по соответствующей теме и не являются утверждением о полном покрытии исходных книг.

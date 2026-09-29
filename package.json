@@ -1,0 +1,19 @@
+{
+  "name": "go-backend-handbook",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.22.2"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev site --host 127.0.0.1",
+    "docs:check": "node site/scripts/check-content.mjs",
+    "docs:build": "vitepress build site",
+    "docs:serve": "vite preview site --outDir .vitepress/dist --host 127.0.0.1 --port 4173 --strictPort",
+    "test:site": "node --test site/tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "vitepress": "1.6.4",
+    "vue": "3.5.43"
+  }
+}

@@ -1,0 +1,76 @@
+[
+  {
+    "id": "unit-integration",
+    "title": "Модульные и интеграционные тесты",
+    "group": "testing",
+    "order": 1,
+    "summary": "Границы изоляции, под-тесты, fixtures и проверка реальных адаптеров.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/testing",
+      "https://pkg.go.dev/net/http/httptest",
+      "https://go.dev/doc/tutorial/add-a-test"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "fuzzing",
+    "title": "Fuzz-тестирование",
+    "group": "testing",
+    "order": 2,
+    "summary": "Coverage-guided поиск входов, свойства, seed corpus и регрессионное воспроизведение.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/doc/security/fuzz/",
+      "https://pkg.go.dev/testing#hdr-Fuzzing",
+      "https://pkg.go.dev/cmd/go#hdr-Testing_flags"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "race-concurrent-tests",
+    "title": "Гонки и конкурентные тесты",
+    "group": "testing",
+    "order": 3,
+    "summary": "Границы race detector и управляемое расписание concurrency через testing/synctest.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/doc/articles/race_detector",
+      "https://pkg.go.dev/testing/synctest",
+      "https://go.dev/ref/mem"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "benchmarks",
+    "title": "Бенчмарки",
+    "group": "testing",
+    "order": 4,
+    "summary": "B.Loop, границы измерения и воспроизводимое сравнение производительности.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/testing#B.Loop",
+      "https://pkg.go.dev/cmd/go#hdr-Testing_flags",
+      "https://pkg.go.dev/golang.org/x/perf/cmd/benchstat"
+    ],
+    "exercises": [
+      "allocations"
+    ]
+  },
+  {
+    "id": "pprof-trace",
+    "title": "Профилирование и execution trace",
+    "group": "testing",
+    "order": 5,
+    "summary": "Выбор между профилями pprof и trace, goroutineleak в Go 1.27 и ограничения reachability.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/doc/diagnostics",
+      "https://pkg.go.dev/runtime/pprof",
+      "https://go.dev/doc/go1.27#goroutine_leak_profile",
+      "https://go.dev/blog/goroutine-leak-profiles",
+      "https://pkg.go.dev/net/http/pprof"
+    ],
+    "exercises": []
+  }
+]

@@ -1,0 +1,21 @@
+# Миграция примеров конкурентности
+
+Старые разрозненные программы перенесены в шесть проверяемых задач и небольшие примеры вызова API. Примеры работают с числами или переданным вызывающей стороной HTTP client; тесты не обращаются к публичной сети и не используют случайную задержку для управления расписанием.
+
+| Старый файл | Новый материал |
+| --- | --- |
+| <code>test/channels/worker_pool.go</code> | <code>practice/worker-pool</code>, <code>practice/worker-pool/example/example.go</code> и wrapper <code>examples/concurrency/worker_pool.go</code>: очередь, ограниченное число worker-ов и упорядоченные результаты. |
+| <code>test/channels/fan_in_out.go</code> | <code>practice/worker-pool/example/example.go</code> и <code>practice/fan-in/example/example.go</code>: fan-out обработки и fan-in результатов; демонстрация теперь проверяема и не печатает из worker-ов. |
+| <code>test/channels/pipe_easy.go</code> | <code>practice/pipeline</code>, <code>practice/pipeline/example/example.go</code> и wrapper <code>examples/concurrency/pipeline.go</code>: сохранён сценарий из пяти чисел <code>1..5</code> — первый этап удваивает, затем learner API <code>Square</code> возводит результат в квадрат: <code>4, 16, 36, 64, 100</code>. Первый этап завершает отправку по отмене и присоединяется до возврата примера. |
+| <code>test/channels/pipeline_pattern.go</code> | <code>practice/fan-in</code>, <code>practice/fan-in/example/example.go</code> и wrapper <code>examples/concurrency/fan_in.go</code>: объединение параллельных потоков и отмена через context вместо отдельного done-канала. |
+| <code>test/channels/request_ride.go</code> | <code>practice/first-success</code>, <code>practice/first-success/example/example.go</code> и wrapper <code>examples/concurrency/first_success.go</code>: выбор первой найденной службы такси. Пример использует детерминированные callbacks, а не random и sleep. |
+| <code>test/channels/semaphore.go</code> | <code>practice/url-fetcher/example/example.go</code>: ограничение числа одновременных HTTP-запросов, проверка ошибок и закрытие каждого response body. |
+| <code>test/goroutine/cancel_gor.go</code> | <code>practice/url-fetcher</code> и <code>practice/url-fetcher/example/example.go</code>: запросы получают контекст и deadline; ошибка одного URL записывается в его результат, а отмена родителя прекращает batch. |
+| <code>test/goroutine/cancel_gor_err_group.go</code> | <code>practice/errgroup-batch</code> и <code>practice/errgroup-batch/example/example.go</code>: ограниченный запуск с <code>errgroup.WithContext</code> и ожидание группы. |
+| <code>test/errgroup/errgroup.go</code> | <code>practice/errgroup-batch</code> и <code>practice/errgroup-batch/example/example.go</code>: ошибка группы теперь возвращается вызывающему коду, поэтому после неуспеха нельзя печатать ложное сообщение об успешной обработке всех URL. |
+| <code>test/main/main.go</code> | Его разрозненный executable entry point удалён; сценарии запускаются через функции из <code>examples/concurrency</code> и тестируются по одной задаче. |
+| <code>mini-design/url-fetcher/main.go</code> | <code>practice/url-fetcher</code>, <code>practice/url-fetcher/example/example.go</code> и wrapper <code>examples/concurrency/url_fetcher.go</code>: результаты возвращаются в исходном порядке, timeout создаётся для каждого URL, body закрывается до перехода к следующей работе. |
+
+Несколько исходников показывали ошибки, которые нельзя сохранять как поведение: в taxi-примере канал результата читался дважды для одного победителя; отмена происходила после ожидания всех попыток, поэтому не останавливала проигравших; HTTP-коды местами читались через nil response после ошибки; успешный response body не всегда закрывался. В примере errgroup ошибка печаталась, но функция всё равно возвращала nil и сообщение «все URL обработаны успешно»; другой старый errgroup запускал обычную группу без отмены siblings. В старом fetcher timeout-контекст создавался один раз на worker, а чтение результата оставалось отдельным каналом без гарантии порядка.
+
+Новые контракты явно различают ошибку отдельного URL и отмену всего batch, требуют кооперативной обработки context и ожидания уже запущенных callbacks. Их тесты используют каналы для координации и <code>httptest</code> для HTTP; реальные сайты не нужны.

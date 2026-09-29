@@ -1,0 +1,177 @@
+[
+  {
+    "id": "slice-alias",
+    "title": "Алиасинг среза после append",
+    "kind": "trace",
+    "topics": [
+      "slices"
+    ]
+  },
+  {
+    "id": "range-mutation",
+    "title": "Изменение среза во время range",
+    "kind": "trace",
+    "topics": [
+      "control-range",
+      "slices"
+    ]
+  },
+  {
+    "id": "nil-empty-json",
+    "title": "Nil, пустой срез и JSON v1",
+    "kind": "trace",
+    "topics": [
+      "slices",
+      "json"
+    ]
+  },
+  {
+    "id": "typed-nil",
+    "title": "Типизированный nil в интерфейсе",
+    "kind": "trace",
+    "topics": [
+      "interfaces",
+      "errors",
+      "values-pointers"
+    ]
+  },
+  {
+    "id": "method-sets",
+    "title": "Наборы методов и embedding",
+    "kind": "trace",
+    "topics": [
+      "methods-embedding"
+    ]
+  },
+  {
+    "id": "defer-order",
+    "title": "Порядок defer",
+    "kind": "trace",
+    "topics": [
+      "defer-panic-recover"
+    ]
+  },
+  {
+    "id": "named-return",
+    "title": "Именованный результат и defer",
+    "kind": "trace",
+    "topics": [
+      "defer-panic-recover"
+    ]
+  },
+  {
+    "id": "map-iteration",
+    "title": "Обход map без фиксированного порядка",
+    "kind": "trace",
+    "topics": [
+      "maps",
+      "map-internals"
+    ]
+  },
+  {
+    "id": "select-states",
+    "title": "Готовые и отключённые case в select",
+    "kind": "trace",
+    "topics": [
+      "select",
+      "channels"
+    ]
+  },
+  {
+    "id": "loop-closures",
+    "title": "Замыкания в цикле Go 1.22+",
+    "kind": "trace",
+    "topics": [
+      "functions-closures",
+      "control-range"
+    ]
+  },
+  {
+    "id": "worker-pool",
+    "title": "Worker pool с отменой",
+    "kind": "implement",
+    "topics": [
+      "concurrency-patterns",
+      "context"
+    ]
+  },
+  {
+    "id": "pipeline",
+    "title": "Отменяемый pipeline",
+    "kind": "implement",
+    "topics": [
+      "concurrency-patterns",
+      "channels"
+    ]
+  },
+  {
+    "id": "fan-in",
+    "title": "Объединение каналов fan-in",
+    "kind": "implement",
+    "topics": [
+      "concurrency-patterns",
+      "channels"
+    ]
+  },
+  {
+    "id": "first-success",
+    "title": "Первый успешный результат",
+    "kind": "implement",
+    "topics": [
+      "context",
+      "goroutine-lifecycle"
+    ]
+  },
+  {
+    "id": "url-fetcher",
+    "title": "Параллельный HTTP-загрузчик",
+    "kind": "implement",
+    "topics": [
+      "net-http",
+      "context"
+    ]
+  },
+  {
+    "id": "errgroup-batch",
+    "title": "Пакетная обработка через errgroup",
+    "kind": "implement",
+    "topics": [
+      "x-sync"
+    ]
+  },
+  {
+    "id": "http-middleware",
+    "title": "HTTP middleware с авторизацией",
+    "kind": "implement",
+    "topics": [
+      "middleware-di",
+      "net-http"
+    ]
+  },
+  {
+    "id": "multi-error",
+    "title": "Сбор и проверка нескольких ошибок",
+    "kind": "implement",
+    "topics": [
+      "errors"
+    ]
+  },
+  {
+    "id": "generic-transform",
+    "title": "Обобщённое преобразование",
+    "kind": "implement",
+    "topics": [
+      "generics"
+    ]
+  },
+  {
+    "id": "allocations",
+    "title": "Сборка строки и измерение аллокаций",
+    "kind": "implement",
+    "topics": [
+      "strings-runes",
+      "allocations-layout",
+      "benchmarks"
+    ]
+  }
+]

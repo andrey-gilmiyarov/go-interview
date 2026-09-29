@@ -1,0 +1,48 @@
+[
+  {
+    "id": "modules-dependencies",
+    "title": "Модули и зависимости",
+    "group": "tooling",
+    "order": 1,
+    "summary": "Пакет и модуль, SemVer, выбор MVS, контрольные суммы go.sum и vendor.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/mod",
+      "https://go.dev/doc/modules/gomod-ref",
+      "https://go.dev/doc/modules/major-version"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "toolchain-build",
+    "title": "Сборка и toolchain",
+    "group": "tooling",
+    "order": 2,
+    "summary": "Минимальная языковая версия, выбор toolchain, build tags, cgo и входы воспроизводимой сборки.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/doc/toolchain",
+      "https://pkg.go.dev/cmd/go#hdr-Build_constraints",
+      "https://pkg.go.dev/cmd/cgo",
+      "https://pkg.go.dev/cmd/go",
+      "https://pkg.go.dev/runtime/debug#ReadBuildInfo"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "vet-workflow",
+    "title": "Проверки Go-кода в ежедневной работе",
+    "group": "tooling",
+    "order": 3,
+    "summary": "Практические границы gofmt, vet, test, race detector, fuzzing и benchmark.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/cmd/vet",
+      "https://pkg.go.dev/cmd/go#hdr-Test_packages",
+      "https://go.dev/doc/articles/race_detector",
+      "https://go.dev/doc/security/fuzz/",
+      "https://pkg.go.dev/testing#hdr-Benchmarks"
+    ],
+    "exercises": []
+  }
+]

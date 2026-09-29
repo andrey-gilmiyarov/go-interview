@@ -1,0 +1,67 @@
+[
+  {
+    "id": "concurrency-patterns",
+    "title": "Паттерны конкурентности",
+    "group": "patterns",
+    "order": 1,
+    "summary": "Worker pool, pipeline и fan-in: ограничение параллелизма, давление очереди, отмена и join.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/blog/pipelines",
+      "https://go.dev/ref/mem#channel-communication",
+      "https://pkg.go.dev/context",
+      "https://pkg.go.dev/sync#WaitGroup"
+    ],
+    "exercises": [
+      "worker-pool",
+      "pipeline",
+      "fan-in"
+    ]
+  },
+  {
+    "id": "middleware-di",
+    "title": "Middleware и внедрение зависимостей",
+    "group": "patterns",
+    "order": 2,
+    "summary": "Порядок обёрток http.Handler, ранний ответ middleware и явная передача зависимостей.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/net/http#Handler",
+      "https://pkg.go.dev/net/http#HandlerFunc",
+      "https://go.dev/blog/routing-enhancements",
+      "https://go.dev/wiki/CodeReviewComments#interfaces"
+    ],
+    "exercises": [
+      "http-middleware"
+    ]
+  },
+  {
+    "id": "functional-options",
+    "title": "Функциональные options",
+    "group": "patterns",
+    "order": 3,
+    "summary": "Настройки конструктора с defaults, явной валидацией, порядком применения и правилами дублей.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/blog/module-compatibility",
+      "https://go.dev/doc/codewalk/functions/",
+      "https://go.dev/doc/comment"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "graceful-shutdown",
+    "title": "Корректное завершение сервиса",
+    "group": "patterns",
+    "order": 4,
+    "summary": "Остановка admission, bounded drain, join handlers и workers, безопасное закрытие общих ресурсов.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/net/http#Server.Shutdown",
+      "https://pkg.go.dev/os/signal#NotifyContext",
+      "https://pkg.go.dev/context#WithTimeout",
+      "https://go.dev/blog/pipelines"
+    ],
+    "exercises": []
+  }
+]

@@ -1,0 +1,98 @@
+[
+  {
+    "id": "io-files",
+    "title": "Потоки ввода-вывода и файлы",
+    "group": "stdlib",
+    "order": 1,
+    "summary": "Контракты Reader и Writer, частичное чтение, ошибки и владение файловыми ресурсами.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/io#Reader",
+      "https://pkg.go.dev/io#Copy",
+      "https://pkg.go.dev/io#ReadFull",
+      "https://pkg.go.dev/os#File.Close"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "net-http",
+    "title": "HTTP-клиент и сервер",
+    "group": "stdlib",
+    "order": 2,
+    "summary": "Тайм-ауты, закрытие HTTP-ответов, соединения и graceful shutdown сервера.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/net/http#Client",
+      "https://pkg.go.dev/net/http#Response",
+      "https://pkg.go.dev/net/http#Server.Shutdown",
+      "https://go.dev/doc/go1.27",
+      "https://pkg.go.dev/net/http/httptest"
+    ],
+    "exercises": [
+      "url-fetcher",
+      "http-middleware"
+    ]
+  },
+  {
+    "id": "json",
+    "title": "JSON в стандартной библиотеке",
+    "group": "stdlib",
+    "order": 3,
+    "summary": "Семантика encoding/json v1, строгий разбор и осознанный переход к JSON v2.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/doc/go1.27",
+      "https://pkg.go.dev/encoding/json",
+      "https://pkg.go.dev/encoding/json/v2",
+      "https://pkg.go.dev/encoding/json/jsontext"
+    ],
+    "exercises": [
+      "nil-empty-json"
+    ]
+  },
+  {
+    "id": "time-timers",
+    "title": "Время, дедлайны и таймеры",
+    "group": "stdlib",
+    "order": 4,
+    "summary": "Монотонное время, календарные зоны, таймеры Go 1.23 и удаление asynctimerchan в 1.27.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/time#Time",
+      "https://pkg.go.dev/time#ParseInLocation",
+      "https://pkg.go.dev/time#NewTimer",
+      "https://go.dev/doc/go1.27"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "database-sql",
+    "title": "Работа с базой через database/sql",
+    "group": "stdlib",
+    "order": 5,
+    "summary": "Пул соединений, контекст, жизненный цикл Rows и границы транзакций без привязки к драйверу.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/database/sql#DB",
+      "https://pkg.go.dev/database/sql#Rows",
+      "https://pkg.go.dev/database/sql#Tx",
+      "https://pkg.go.dev/database/sql#DB.BeginTx"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "slog",
+    "title": "Структурное логирование через log/slog",
+    "group": "stdlib",
+    "order": 6,
+    "summary": "Структурированные атрибуты, группы, handlers, уровни и безопасная политика логирования.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/log/slog#Handler",
+      "https://pkg.go.dev/log/slog#HandlerOptions",
+      "https://pkg.go.dev/log/slog#Logger",
+      "https://go.dev/s/slog-handler-guide"
+    ],
+    "exercises": []
+  }
+]

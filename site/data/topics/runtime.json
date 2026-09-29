@@ -1,0 +1,79 @@
+[
+  {
+    "id": "scheduler-netpoll",
+    "title": "Планировщик, netpoll и системные вызовы",
+    "group": "runtime",
+    "order": 1,
+    "summary": "G/M/P, ожидание сетевого I/O, блокирующие вызовы и container-aware GOMAXPROCS.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/src/runtime/HACKING",
+      "https://go.dev/src/runtime/netpoll.go",
+      "https://pkg.go.dev/runtime#GOMAXPROCS",
+      "https://go.dev/doc/go1.25#runtime"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "stacks-escape",
+    "title": "Стек горутины и escape analysis",
+    "group": "runtime",
+    "order": 2,
+    "summary": "Рост стека горутины, время жизни значений и диагностика решений компилятора.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/doc/gc-guide#Where_Go_Values_Live",
+      "https://go.dev/src/runtime/HACKING#Stacks",
+      "https://go.dev/src/runtime/stack.go"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "garbage-collector",
+    "title": "Сборщик мусора и бюджет памяти",
+    "group": "runtime",
+    "order": 3,
+    "summary": "Трассировка корней, цель GOGC, мягкий GOMEMLIMIT и пределы профилей.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/doc/gc-guide",
+      "https://pkg.go.dev/runtime/debug#SetMemoryLimit",
+      "https://pkg.go.dev/runtime/metrics"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "map-internals",
+    "title": "Внутреннее устройство map",
+    "group": "runtime",
+    "order": 4,
+    "summary": "Swiss-table groups, поиск, tombstones и рост карты в текущей реализации.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Map_types",
+      "https://go.dev/ref/spec#For_statements",
+      "https://go.dev/blog/swisstable",
+      "https://go.dev/src/internal/runtime/maps/map.go"
+    ],
+    "exercises": [
+      "map-iteration"
+    ]
+  },
+  {
+    "id": "allocations-layout",
+    "title": "Аллокации, layout и плотность указателей",
+    "group": "runtime",
+    "order": 5,
+    "summary": "Выравнивание полей, heap allocation, locality, pointer density и измерение стоимости.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Struct_types",
+      "https://go.dev/doc/gc-guide#Optimization_guide",
+      "https://pkg.go.dev/unsafe#Sizeof",
+      "https://go.dev/doc/go1.27#runtime"
+    ],
+    "exercises": [
+      "allocations"
+    ]
+  }
+]

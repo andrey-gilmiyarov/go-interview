@@ -1,0 +1,85 @@
+[
+  {
+    "id": "methods-embedding",
+    "title": "Наборы методов и встраивание",
+    "group": "api",
+    "order": 1,
+    "summary": "Receiver, method sets, продвижение методов и интерфейсная реализация.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Method_sets",
+      "https://go.dev/ref/spec#Struct_types",
+      "https://go.dev/ref/spec#Calls"
+    ],
+    "exercises": [
+      "method-sets"
+    ]
+  },
+  {
+    "id": "interfaces",
+    "title": "Интерфейсы и динамические значения",
+    "group": "api",
+    "order": 2,
+    "summary": "Неявная реализация, typed nil, assertions и сравнение динамических значений.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Interface_types",
+      "https://go.dev/ref/spec#Comparison_operators",
+      "https://go.dev/doc/faq#nil_error"
+    ],
+    "exercises": [
+      "typed-nil"
+    ]
+  },
+  {
+    "id": "generics",
+    "title": "Обобщённые функции и методы",
+    "group": "api",
+    "order": 3,
+    "summary": "Constraints, вывод типов и поддержка generic methods в Go 1.27.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Type_constraints",
+      "https://go.dev/ref/spec#Satisfying_a_type_constraint",
+      "https://go.dev/ref/spec#Operators",
+      "https://go.dev/doc/go1.20#language",
+      "https://go.dev/doc/go1.27",
+      "https://go.dev/blog/generic-methods",
+      "https://go.dev/blog/comparable"
+    ],
+    "exercises": [
+      "generic-transform"
+    ]
+  },
+  {
+    "id": "errors",
+    "title": "Ошибки как публичный контракт",
+    "group": "api",
+    "order": 4,
+    "summary": "Обёртки, sentinel, типизированные и составные ошибки, Is и As.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/errors",
+      "https://pkg.go.dev/fmt#Errorf",
+      "https://go.dev/blog/go1.13-errors"
+    ],
+    "exercises": [
+      "typed-nil",
+      "multi-error"
+    ]
+  },
+  {
+    "id": "packages-api",
+    "title": "Пакеты и устойчивые API",
+    "group": "api",
+    "order": 5,
+    "summary": "Экспортируемые контракты, интерфейсы потребителя и совместимость модулей.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/wiki/CodeReviewComments#interfaces",
+      "https://go.dev/doc/modules/major-version",
+      "https://go.dev/doc/effective_go#interfaces_and_types"
+    ],
+    "exercises": []
+  }
+]

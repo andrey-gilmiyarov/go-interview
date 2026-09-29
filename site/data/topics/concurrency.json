@@ -1,0 +1,120 @@
+[
+  {
+    "id": "goroutine-lifecycle",
+    "title": "Жизненный цикл горутины",
+    "group": "concurrency",
+    "order": 1,
+    "summary": "Владение запуском, отменой, присоединением к горутинам и ресурсами.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/context",
+      "https://pkg.go.dev/sync#WaitGroup",
+      "https://go.dev/doc/go1.27#goroutine-leak-profile",
+      "https://go.dev/ref/mem"
+    ],
+    "exercises": [
+      "first-success"
+    ]
+  },
+  {
+    "id": "channels",
+    "title": "Каналы",
+    "group": "concurrency",
+    "order": 2,
+    "summary": "Передача данных, backpressure, закрытие и владение потоком.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Channel_types",
+      "https://go.dev/ref/spec#Send_statements",
+      "https://go.dev/ref/spec#Receive_operator",
+      "https://go.dev/ref/mem#channel-communication"
+    ],
+    "exercises": [
+      "select-states",
+      "pipeline",
+      "fan-in"
+    ]
+  },
+  {
+    "id": "select",
+    "title": "Оператор select",
+    "group": "concurrency",
+    "order": 3,
+    "summary": "Выбор готовой коммуникации, вычисление case и недетерминизм.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/spec#Select_statements",
+      "https://go.dev/ref/spec#Receive_operator",
+      "https://go.dev/ref/mem#channel-communication"
+    ],
+    "exercises": [
+      "select-states"
+    ]
+  },
+  {
+    "id": "context",
+    "title": "Context и отмена",
+    "group": "concurrency",
+    "order": 4,
+    "summary": "Дедлайны, кооперативная отмена, причины и отделение жизненного цикла.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/context",
+      "https://pkg.go.dev/context#WithCancelCause",
+      "https://pkg.go.dev/context#WithoutCancel",
+      "https://pkg.go.dev/context#WithDeadline"
+    ],
+    "exercises": [
+      "worker-pool",
+      "first-success",
+      "url-fetcher"
+    ]
+  },
+  {
+    "id": "sync-primitives",
+    "title": "Примитивы пакета sync",
+    "group": "concurrency",
+    "order": 5,
+    "summary": "Блокировки, ожидание задач, Once и условия под общей блокировкой.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/sync",
+      "https://pkg.go.dev/sync#WaitGroup.Go",
+      "https://pkg.go.dev/sync#Cond",
+      "https://go.dev/ref/mem"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "memory-model-atomic",
+    "title": "Модель памяти и атомарные операции",
+    "group": "concurrency",
+    "order": 6,
+    "summary": "Data race, happens-before, DRF-SC и границы атомарного обновления.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://go.dev/ref/mem",
+      "https://pkg.go.dev/sync/atomic",
+      "https://pkg.go.dev/sync#Mutex",
+      "https://go.dev/doc/articles/race_detector"
+    ],
+    "exercises": []
+  },
+  {
+    "id": "x-sync",
+    "title": "Расширения golang.org/x/sync",
+    "group": "concurrency",
+    "order": 7,
+    "summary": "errgroup, singleflight и weighted semaphore: разные задачи и компромиссы.",
+    "goVersion": "1.27.1",
+    "sources": [
+      "https://pkg.go.dev/golang.org/x/sync@v0.22.0/errgroup",
+      "https://pkg.go.dev/golang.org/x/sync@v0.22.0/singleflight",
+      "https://pkg.go.dev/golang.org/x/sync@v0.22.0/semaphore",
+      "https://cs.opensource.google/go/x/sync/+/refs/tags/v0.22.0:semaphore/semaphore.go"
+    ],
+    "exercises": [
+      "errgroup-batch"
+    ]
+  }
+]

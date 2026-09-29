@@ -1,0 +1,10 @@
+[
+  { "id": "language", "title": "Язык Go" },
+  { "id": "api", "title": "API и контракты" },
+  { "id": "concurrency", "title": "Конкурентность" },
+  { "id": "runtime", "title": "Runtime и память" },
+  { "id": "stdlib", "title": "Стандартная библиотека" },
+  { "id": "testing", "title": "Тестирование" },
+  { "id": "patterns", "title": "Паттерны" },
+  { "id": "tooling", "title": "Инструменты" }
+]
