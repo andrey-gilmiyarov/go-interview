@@ -1,16 +1,18 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
-import { buildSidebar, loadRegistry, stripNonSearchableContent } from '../scripts/content.mjs'
+import { buildKafkaSidebar, buildSidebar, loadKafkaRegistry, loadRegistry, stripNonSearchableContent } from '../scripts/content.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const { topics, exercises } = loadRegistry({ root })
+const kafkaTopics = loadKafkaRegistry({ root })
 const topicsBySourcePath = new Map(topics.map((topic) => [`go/${topic.group}/${topic.id}.md`, topic]))
+const kafkaTopicsBySourcePath = new Map(kafkaTopics.map((topic) => [`kafka/${topic.id}.md`, topic]))
 
 export default defineConfig({
   lang: 'ru-RU',
   title: 'Go и backend',
-  description: 'Локальный справочник по Go и backend-разработке.',
+  description: 'Локальный справочник по Go, backend-разработке и Kafka.',
   cleanUrls: true,
   lastUpdated: false,
   markdown: {
@@ -23,12 +25,21 @@ export default defineConfig({
     nav: [
       { text: 'Главная', link: '/' },
       { text: 'Go', link: '/go/' },
+      { text: 'Kafka', link: '/kafka/' },
       { text: 'Практика', link: '/practice/' },
       { text: 'Источники', link: '/sources/' },
       { text: 'Дорожная карта', link: '/roadmap' },
     ],
     sidebar: {
       '/go/': buildSidebar({ root }),
+      '/kafka/': [
+        buildKafkaSidebar({ root }),
+        {
+          text: 'Лаборатория',
+          collapsed: false,
+          items: [{ text: 'Запуск и сценарии', link: '/kafka/lab' }],
+        },
+      ],
       '/practice/': [
         {
           text: 'Разбор поведения',
@@ -102,6 +113,13 @@ export default defineConfig({
     if (topic) {
       pageData.frontmatter.topicSummary = topic.summary
       pageData.frontmatter.goVersion = topic.goVersion
+    }
+    const kafkaTopic = kafkaTopicsBySourcePath.get(sourcePath)
+    if (kafkaTopic) {
+      pageData.frontmatter.topicSummary = kafkaTopic.summary
+      pageData.frontmatter.kafkaVersion = kafkaTopic.kafkaVersion
+      pageData.frontmatter.comparisonVersion = kafkaTopic.comparisonVersion
+      pageData.frontmatter.reviewedAt = kafkaTopic.reviewedAt
     }
   },
 })

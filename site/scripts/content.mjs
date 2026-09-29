@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -83,6 +83,15 @@ function readRegistry(root) {
   return { errors, groups: Array.isArray(groups) ? groups : [], topics, exercises: Array.isArray(exercises) ? exercises : [], hasExerciseManifest }
 }
 
+function readKafkaRegistry(root) {
+  const errors = []
+  const filePath = path.join(root, 'site/data/kafka.json')
+  const exists = existsSync(filePath)
+  const parsed = readJSON(filePath, 'site/data/kafka.json', errors, [])
+  if (exists && !Array.isArray(parsed)) errors.push('site/data/kafka.json must contain an array.')
+  return { errors, records: Array.isArray(parsed) ? parsed : [], exists }
+}
+
 /**
  * Load the metadata needed by the site. Topic files that have not been written
  * yet are deliberately treated as empty so independent authors can work in
@@ -109,8 +118,52 @@ export function buildSidebar({ root = REPOSITORY_ROOT } = {}) {
   }))
 }
 
+/** Load the Kafka topic metadata without changing the Go registry contract. */
+export function loadKafkaRegistry({ root = REPOSITORY_ROOT } = {}) {
+  const registry = readKafkaRegistry(root)
+  if (registry.errors.length) throw new Error(registry.errors.join('\n'))
+  return registry.records
+}
+
+/** Build the VitePress navigation group for the Kafka handbook. */
+export function buildKafkaSidebar({ root = REPOSITORY_ROOT } = {}) {
+  const records = loadKafkaRegistry({ root })
+  const items = records
+    .slice()
+    .sort((left, right) => {
+      const leftOrder = Number.isInteger(left?.order) && left.order > 0 ? left.order : Number.MAX_SAFE_INTEGER
+      const rightOrder = Number.isInteger(right?.order) && right.order > 0 ? right.order : Number.MAX_SAFE_INTEGER
+      return leftOrder - rightOrder || String(left?.title ?? '').localeCompare(String(right?.title ?? ''), 'ru')
+    })
+    .map((record) => ({
+      text: typeof record?.title === 'string' ? record.title : '',
+      link: '/kafka/' + (typeof record?.id === 'string' ? record.id : ''),
+    }))
+  return {
+    text: 'Kafka',
+    collapsed: false,
+    items: [{ text: 'Обзор', link: '/kafka/' }, ...items],
+  }
+}
+
 function isExternalTarget(target) {
   return /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(target)
+}
+
+function isRegularFile(filePath) {
+  try {
+    return statSync(filePath).isFile()
+  } catch {
+    return false
+  }
+}
+
+function isDirectory(directoryPath) {
+  try {
+    return statSync(directoryPath).isDirectory()
+  } catch {
+    return false
+  }
 }
 
 function resolveLocalFile(root, fromFile, rawTarget) {
@@ -120,7 +173,7 @@ function resolveLocalFile(root, fromFile, rawTarget) {
   try {
     target = decodeURIComponent(target)
   } catch {
-    return null
+    return { invalidEncoding: true }
   }
   const siteRoot = path.join(root, 'site')
   let candidate
@@ -129,11 +182,18 @@ function resolveLocalFile(root, fromFile, rawTarget) {
   else candidate = path.resolve(path.dirname(fromFile), target)
 
   const rootPrefix = `${path.resolve(root)}${path.sep}`
-  if (candidate !== path.resolve(root) && !candidate.startsWith(rootPrefix)) return candidate
+  if (candidate !== path.resolve(root) && !candidate.startsWith(rootPrefix)) return { path: candidate }
+  if (isRegularFile(candidate)) return { path: candidate }
+  if (isDirectory(candidate)) {
+    const landingPage = ['index.md', 'README.md']
+      .map((name) => path.join(candidate, name))
+      .find(isRegularFile)
+    return { path: landingPage ?? candidate }
+  }
+
   const candidates = [candidate]
   if (!path.extname(candidate)) candidates.push(`${candidate}.md`, path.join(candidate, 'index.md'), path.join(candidate, 'README.md'))
-  if (existsSync(candidate) && !candidate.endsWith(path.sep)) return candidate
-  return candidates.find((possible) => existsSync(possible)) ?? candidate
+  return { path: candidates.find(isRegularFile) ?? candidate }
 }
 
 function stripCodeFences(markdown) {
@@ -173,9 +233,14 @@ function checkMarkdownReferences(root, filePath, errors) {
   for (const match of markdown.matchAll(includePattern)) references.push({ target: match[1], kind: 'include' })
 
   for (const reference of references) {
-    const targetPath = resolveLocalFile(root, filePath, reference.target)
-    if (!targetPath || isExternalTarget(reference.target)) continue
-    if (!existsSync(targetPath) || !path.resolve(targetPath).startsWith(`${path.resolve(root)}${path.sep}`)) {
+    const resolution = resolveLocalFile(root, filePath, reference.target)
+    if (!resolution) continue
+    if (resolution.invalidEncoding) {
+      errors.push(`${rel}: invalid percent-encoding in relative ${reference.kind} path.`)
+      continue
+    }
+    const targetPath = resolution.path
+    if (!isRegularFile(targetPath) || !path.resolve(targetPath).startsWith(`${path.resolve(root)}${path.sep}`)) {
       errors.push(`${rel}: unresolved relative ${reference.kind} path "${reference.target}".`)
     }
   }
@@ -245,6 +310,74 @@ function validateMetadataTopic(topic, groupId, index, root, knownIds, errors) {
   }
 }
 
+function isSemanticVersion(version) {
+  return typeof version === 'string' && /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(version)
+}
+
+function isRealISODate(value) {
+  if (typeof value !== 'string' || !/^(?!0000)\d{4}-\d{2}-\d{2}$/.test(value)) return false
+  const date = new Date(value + 'T00:00:00.000Z')
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value
+}
+
+function validateKafkaTopic(topic, index, root, knownIds, knownOrders, errors) {
+  const location = 'site/data/kafka.json[' + index + ']'
+  if (!topic || typeof topic !== 'object' || Array.isArray(topic)) {
+    errors.push(location + ': Kafka topic record must be an object.')
+    return
+  }
+
+  for (const key of ['id', 'title', 'summary', 'kafkaVersion', 'comparisonVersion', 'reviewedAt']) {
+    if (typeof topic[key] !== 'string' || !topic[key].trim()) {
+      errors.push(location + ': ' + key + ' must be a non-empty string.')
+    }
+  }
+
+  const validId = typeof topic.id === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(topic.id)
+  if (typeof topic.id === 'string') {
+    if (!validId) errors.push(location + ': id "' + topic.id + '" must be a kebab-case slug.')
+    else if (topic.id === 'index') errors.push(location + ': id "index" is reserved for the Kafka overview.')
+    else if (knownIds.has(topic.id)) errors.push(location + ': duplicate Kafka topic id "' + topic.id + '".')
+    else knownIds.add(topic.id)
+  }
+
+  if (!Number.isInteger(topic.order) || topic.order < 1) {
+    errors.push(location + ': order must be a positive integer.')
+  } else if (knownOrders.has(topic.order)) {
+    errors.push(location + ': duplicate Kafka topic order ' + topic.order + '.')
+  } else {
+    knownOrders.add(topic.order)
+  }
+
+  if (typeof topic.kafkaVersion === 'string' && !isSemanticVersion(topic.kafkaVersion)) {
+    errors.push(location + ': kafkaVersion must use x.y.z semantic version format.')
+  }
+  if (typeof topic.comparisonVersion === 'string' && !isSemanticVersion(topic.comparisonVersion)) {
+    errors.push(location + ': comparisonVersion must use x.y.z semantic version format.')
+  }
+  if (typeof topic.reviewedAt === 'string' && !isRealISODate(topic.reviewedAt)) {
+    errors.push(location + ': reviewedAt must be a real ISO date in YYYY-MM-DD format.')
+  }
+  if (!Array.isArray(topic.sources) || topic.sources.length === 0) {
+    errors.push(location + ': sources must be a non-empty array.')
+  } else {
+    topic.sources.forEach((source, sourceIndex) => validateSourceURL(source, location + '.sources[' + sourceIndex + ']', errors))
+  }
+
+  if (!validId || topic.id === 'index') return
+  const articlePath = path.join(root, 'site/kafka', topic.id + '.md')
+  const articleName = 'site/kafka/' + topic.id + '.md'
+  if (!existsSync(articlePath)) {
+    errors.push(location + ': missing article ' + articleName + '.')
+    return
+  }
+  const markdown = readFileSync(articlePath, 'utf8')
+  const headings = topicHeadings(stripCodeFences(markdown))
+  for (const heading of REQUIRED_HEADINGS) {
+    if (!headings.has(heading)) errors.push(articleName + ': missing required heading "' + heading + '".')
+  }
+}
+
 /** Validate the metadata registry and all local Markdown references. */
 export function checkContent({ root = REPOSITORY_ROOT, partial = false } = {}) {
   const errors = []
@@ -274,6 +407,15 @@ export function checkContent({ root = REPOSITORY_ROOT, partial = false } = {}) {
     }
     topics.forEach((topic, index) => validateMetadataTopic(topic, groupId, index, root, knownTopicIds, errors))
   }
+
+  const kafkaRegistry = readKafkaRegistry(root)
+  errors.push(...kafkaRegistry.errors)
+  if (!partial && !kafkaRegistry.exists) errors.push('Missing site/data/kafka.json.')
+  const knownKafkaIds = new Set()
+  const knownKafkaOrders = new Set()
+  kafkaRegistry.records.forEach((topic, index) => {
+    validateKafkaTopic(topic, index, root, knownKafkaIds, knownKafkaOrders, errors)
+  })
 
   const exercisePath = path.join(root, 'site/data/exercises.json')
   if (!registry.hasExerciseManifest) {
@@ -328,15 +470,24 @@ export function checkContent({ root = REPOSITORY_ROOT, partial = false } = {}) {
   const markdownFiles = [
     ...walkMarkdown(path.join(root, 'site')),
     ...walkMarkdown(path.join(root, 'practice')),
+    ...walkMarkdown(path.join(root, 'labs/kafka')),
     ...repositoryMarkdownFiles,
   ]
   for (const filePath of markdownFiles) checkMarkdownReferences(root, filePath, errors)
 
   if (!partial && registry.topics.length !== 42) errors.push(`Expected 42 topics, found ${registry.topics.length}.`)
   if (!partial && registry.exercises.length !== 20) errors.push(`Expected 20 exercises, found ${registry.exercises.length}.`)
+  if (!partial && kafkaRegistry.records.length !== 8) {
+    errors.push('Expected 8 Kafka topics, found ' + kafkaRegistry.records.length + '.')
+  }
   return {
     errors,
-    stats: { groups: registry.groups.length, topics: registry.topics.length, exercises: registry.exercises.length },
+    stats: {
+      groups: registry.groups.length,
+      topics: registry.topics.length,
+      exercises: registry.exercises.length,
+      kafkaTopics: kafkaRegistry.records.length,
+    },
   }
 }
 

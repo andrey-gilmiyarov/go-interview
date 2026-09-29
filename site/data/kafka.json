@@ -1,0 +1,122 @@
+[
+  {
+    "id": "topics-partitions",
+    "title": "Топики, партиции и журнал",
+    "order": 1,
+    "summary": "Модель журнала, ключи партиционирования и хранение событий.",
+    "kafkaVersion": "4.3.1",
+    "comparisonVersion": "3.9.2",
+    "reviewedAt": "2026-09-29",
+    "sources": [
+      "https://kafka.apache.org/43/design/design/",
+      "https://kafka.apache.org/43/configuration/topic-configs/",
+      "https://kafka.apache.org/39/design/design/"
+    ]
+  },
+  {
+    "id": "replication",
+    "title": "Репликация и запись",
+    "order": 2,
+    "summary": "Лидер, ISR, подтверждение записи и поведение при отказах брокеров.",
+    "kafkaVersion": "4.3.1",
+    "comparisonVersion": "3.9.2",
+    "reviewedAt": "2026-09-29",
+    "sources": [
+      "https://kafka.apache.org/43/configuration/producer-configs/",
+      "https://kafka.apache.org/43/design/design/",
+      "https://kafka.apache.org/39/configuration/producer-configs/"
+    ]
+  },
+  {
+    "id": "consumer-groups",
+    "title": "Consumer groups",
+    "order": 3,
+    "summary": "Назначение партиций, rebalance и жизненный цикл consumers в Go.",
+    "kafkaVersion": "4.3.1",
+    "comparisonVersion": "3.9.2",
+    "reviewedAt": "2026-09-29",
+    "sources": [
+      "https://kafka.apache.org/43/operations/consumer-rebalance-protocol/",
+      "https://kafka.apache.org/43/configuration/consumer-configs/",
+      "https://kafka.apache.org/39/configuration/consumer-configs/",
+      "https://pkg.go.dev/github.com/twmb/franz-go@v1.22.1/pkg/kgo"
+    ]
+  },
+  {
+    "id": "offsets-delivery",
+    "title": "Offsets и повторная доставка",
+    "order": 4,
+    "summary": "Связь обработки и commit offset, повторы после сбоев и порядок партиций.",
+    "kafkaVersion": "4.3.1",
+    "comparisonVersion": "3.9.2",
+    "reviewedAt": "2026-09-29",
+    "sources": [
+      "https://kafka.apache.org/43/configuration/consumer-configs/",
+      "https://kafka.apache.org/43/design/design/",
+      "https://kafka.apache.org/39/configuration/consumer-configs/",
+      "https://pkg.go.dev/github.com/twmb/franz-go@v1.22.1/pkg/kgo"
+    ]
+  },
+  {
+    "id": "transactions",
+    "title": "Идемпотентность и транзакции Kafka",
+    "order": 5,
+    "summary": "Idempotent producer и атомарная обработка Kafka-to-Kafka с read_committed.",
+    "kafkaVersion": "4.3.1",
+    "comparisonVersion": "3.9.2",
+    "reviewedAt": "2026-09-29",
+    "sources": [
+      "https://kafka.apache.org/43/design/design/",
+      "https://kafka.apache.org/43/configuration/producer-configs/",
+      "https://kafka.apache.org/43/configuration/consumer-configs/",
+      "https://pkg.go.dev/github.com/twmb/franz-go@v1.22.1/pkg/kgo"
+    ]
+  },
+  {
+    "id": "deduplication",
+    "title": "Дедупликация и внешние эффекты",
+    "order": 6,
+    "summary": "Атомарная запись event ID и бизнес-эффекта в PostgreSQL.",
+    "kafkaVersion": "4.3.1",
+    "comparisonVersion": "3.9.2",
+    "reviewedAt": "2026-09-29",
+    "sources": [
+      "https://kafka.apache.org/43/design/design/",
+      "https://kafka.apache.org/43/configuration/consumer-configs/",
+      "https://www.postgresql.org/docs/17/sql-insert.html",
+      "https://pkg.go.dev/github.com/twmb/franz-go@v1.22.1/pkg/kgo"
+    ]
+  },
+  {
+    "id": "outbox",
+    "title": "Transactional outbox",
+    "order": 7,
+    "summary": "Публикация изменений заказа через transactional outbox и повторы.",
+    "kafkaVersion": "4.3.1",
+    "comparisonVersion": "3.9.2",
+    "reviewedAt": "2026-09-29",
+    "sources": [
+      "https://kafka.apache.org/43/design/design/",
+      "https://kafka.apache.org/39/design/design/",
+      "https://www.postgresql.org/docs/17/tutorial-transactions.html",
+      "https://debezium.io/documentation/reference/stable/connectors/postgresql.html",
+      "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+      "https://pkg.go.dev/github.com/twmb/franz-go@v1.22.1/pkg/kgo"
+    ]
+  },
+  {
+    "id": "failures",
+    "title": "Обработка сбоев",
+    "order": 8,
+    "summary": "Повторы, DLQ, backpressure, graceful shutdown и диагностика consumer pipeline.",
+    "kafkaVersion": "4.3.1",
+    "comparisonVersion": "3.9.2",
+    "reviewedAt": "2026-09-29",
+    "sources": [
+      "https://kafka.apache.org/43/configuration/consumer-configs/",
+      "https://kafka.apache.org/43/configuration/producer-configs/",
+      "https://kafka.apache.org/39/configuration/consumer-configs/",
+      "https://pkg.go.dev/github.com/twmb/franz-go@v1.22.1/pkg/kgo"
+    ]
+  }
+]

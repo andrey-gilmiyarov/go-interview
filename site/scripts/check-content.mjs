@@ -11,9 +11,9 @@ if (unknown.length) {
   const report = checkContent({ partial: args.has('--partial') })
   if (report.errors.length) {
     console.error(report.errors.map((error) => `✗ ${error}`).join('\n'))
-    console.error(`Checked ${report.stats.topics} topics and ${report.stats.exercises} exercises.`)
+    console.error(`Checked ${report.stats.topics} Go topics, ${report.stats.exercises} exercises, and ${report.stats.kafkaTopics} Kafka topics.`)
     process.exitCode = 1
   } else {
-    console.log(`Content check passed: ${report.stats.groups} groups, ${report.stats.topics} topics, ${report.stats.exercises} exercises.`)
+    console.log(`Content check passed: ${report.stats.groups} groups, ${report.stats.topics} Go topics, ${report.stats.exercises} exercises, and ${report.stats.kafkaTopics} Kafka topics.`)
   }
 }
