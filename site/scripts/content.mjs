@@ -92,6 +92,15 @@ function readKafkaRegistry(root) {
   return { errors, records: Array.isArray(parsed) ? parsed : [], exists }
 }
 
+function readPostgresRegistry(root) {
+  const errors = []
+  const filePath = path.join(root, 'site/data/postgres.json')
+  const exists = existsSync(filePath)
+  const parsed = readJSON(filePath, 'site/data/postgres.json', errors, [])
+  if (exists && !Array.isArray(parsed)) errors.push('site/data/postgres.json must contain an array.')
+  return { errors, records: Array.isArray(parsed) ? parsed : [], exists }
+}
+
 /**
  * Load the metadata needed by the site. Topic files that have not been written
  * yet are deliberately treated as empty so independent authors can work in
@@ -143,6 +152,34 @@ export function buildKafkaSidebar({ root = REPOSITORY_ROOT } = {}) {
     text: 'Kafka',
     collapsed: false,
     items: [{ text: 'Обзор', link: '/kafka/' }, ...items],
+  }
+}
+
+/** Load the Postgres topic metadata without changing the Go registry contract. */
+export function loadPostgresRegistry({ root = REPOSITORY_ROOT } = {}) {
+  const registry = readPostgresRegistry(root)
+  if (registry.errors.length) throw new Error(registry.errors.join('\n'))
+  return registry.records
+}
+
+/** Build the VitePress navigation group for the Postgres handbook. */
+export function buildPostgresSidebar({ root = REPOSITORY_ROOT } = {}) {
+  const records = loadPostgresRegistry({ root })
+  const items = records
+    .slice()
+    .sort((left, right) => {
+      const leftOrder = Number.isInteger(left?.order) && left.order > 0 ? left.order : Number.MAX_SAFE_INTEGER
+      const rightOrder = Number.isInteger(right?.order) && right.order > 0 ? right.order : Number.MAX_SAFE_INTEGER
+      return leftOrder - rightOrder || String(left?.title ?? '').localeCompare(String(right?.title ?? ''), 'ru')
+    })
+    .map((record) => ({
+      text: typeof record?.title === 'string' ? record.title : '',
+      link: '/postgres/' + (typeof record?.id === 'string' ? record.id : ''),
+    }))
+  return {
+    text: 'PostgreSQL',
+    collapsed: false,
+    items: [{ text: 'Обзор', link: '/postgres/' }, ...items],
   }
 }
 
@@ -378,6 +415,61 @@ function validateKafkaTopic(topic, index, root, knownIds, knownOrders, errors) {
   }
 }
 
+function validatePostgresTopic(topic, index, root, knownIds, knownOrders, errors) {
+  const location = 'site/data/postgres.json[' + index + ']'
+  if (!topic || typeof topic !== 'object' || Array.isArray(topic)) {
+    errors.push(location + ': PostgreSQL topic record must be an object.')
+    return
+  }
+
+  for (const key of ['id', 'title', 'summary', 'postgresVersion', 'reviewedAt']) {
+    if (typeof topic[key] !== 'string' || !topic[key].trim()) {
+      errors.push(location + ': ' + key + ' must be a non-empty string.')
+    }
+  }
+
+  const validId = typeof topic.id === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(topic.id)
+  if (typeof topic.id === 'string') {
+    if (!validId) errors.push(location + ': id "' + topic.id + '" must be a kebab-case slug.')
+    else if (topic.id === 'index') errors.push(location + ': id "index" is reserved for the PostgreSQL overview.')
+    else if (knownIds.has(topic.id)) errors.push(location + ': duplicate PostgreSQL topic id "' + topic.id + '".')
+    else knownIds.add(topic.id)
+  }
+
+  if (!Number.isInteger(topic.order) || topic.order < 1) {
+    errors.push(location + ': order must be a positive integer.')
+  } else if (knownOrders.has(topic.order)) {
+    errors.push(location + ': duplicate PostgreSQL topic order ' + topic.order + '.')
+  } else {
+    knownOrders.add(topic.order)
+  }
+
+  if (typeof topic.postgresVersion === 'string' && !/^[1-9]\d*\.(0|[1-9]\d*)$/.test(topic.postgresVersion)) {
+    errors.push(location + ': postgresVersion must use major.minor format.')
+  }
+  if (typeof topic.reviewedAt === 'string' && !isRealISODate(topic.reviewedAt)) {
+    errors.push(location + ': reviewedAt must be a real ISO date in YYYY-MM-DD format.')
+  }
+  if (!Array.isArray(topic.sources) || topic.sources.length === 0) {
+    errors.push(location + ': sources must be a non-empty array.')
+  } else {
+    topic.sources.forEach((source, sourceIndex) => validateSourceURL(source, location + '.sources[' + sourceIndex + ']', errors))
+  }
+
+  if (!validId || topic.id === 'index') return
+  const articlePath = path.join(root, 'site/postgres', topic.id + '.md')
+  const articleName = 'site/postgres/' + topic.id + '.md'
+  if (!existsSync(articlePath)) {
+    errors.push(location + ': missing article ' + articleName + '.')
+    return
+  }
+  const markdown = readFileSync(articlePath, 'utf8')
+  const headings = topicHeadings(stripCodeFences(markdown))
+  for (const heading of REQUIRED_HEADINGS) {
+    if (!headings.has(heading)) errors.push(articleName + ': missing required heading "' + heading + '".')
+  }
+}
+
 /** Validate the metadata registry and all local Markdown references. */
 export function checkContent({ root = REPOSITORY_ROOT, partial = false } = {}) {
   const errors = []
@@ -415,6 +507,15 @@ export function checkContent({ root = REPOSITORY_ROOT, partial = false } = {}) {
   const knownKafkaOrders = new Set()
   kafkaRegistry.records.forEach((topic, index) => {
     validateKafkaTopic(topic, index, root, knownKafkaIds, knownKafkaOrders, errors)
+  })
+
+  const postgresRegistry = readPostgresRegistry(root)
+  errors.push(...postgresRegistry.errors)
+  if (!partial && !postgresRegistry.exists) errors.push('Missing site/data/postgres.json.')
+  const knownPostgresIds = new Set()
+  const knownPostgresOrders = new Set()
+  postgresRegistry.records.forEach((topic, index) => {
+    validatePostgresTopic(topic, index, root, knownPostgresIds, knownPostgresOrders, errors)
   })
 
   const exercisePath = path.join(root, 'site/data/exercises.json')
@@ -471,6 +572,7 @@ export function checkContent({ root = REPOSITORY_ROOT, partial = false } = {}) {
     ...walkMarkdown(path.join(root, 'site')),
     ...walkMarkdown(path.join(root, 'practice')),
     ...walkMarkdown(path.join(root, 'labs/kafka')),
+    ...walkMarkdown(path.join(root, 'labs/postgres')),
     ...repositoryMarkdownFiles,
   ]
   for (const filePath of markdownFiles) checkMarkdownReferences(root, filePath, errors)
@@ -480,6 +582,9 @@ export function checkContent({ root = REPOSITORY_ROOT, partial = false } = {}) {
   if (!partial && kafkaRegistry.records.length !== 8) {
     errors.push('Expected 8 Kafka topics, found ' + kafkaRegistry.records.length + '.')
   }
+  if (!partial && postgresRegistry.records.length !== 8) {
+    errors.push('Expected 8 PostgreSQL topics, found ' + postgresRegistry.records.length + '.')
+  }
   return {
     errors,
     stats: {
@@ -487,6 +592,7 @@ export function checkContent({ root = REPOSITORY_ROOT, partial = false } = {}) {
       topics: registry.topics.length,
       exercises: registry.exercises.length,
       kafkaTopics: kafkaRegistry.records.length,
+      postgresTopics: postgresRegistry.records.length,
     },
   }
 }

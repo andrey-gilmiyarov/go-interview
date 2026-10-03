@@ -1,10 +1,11 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
-import { buildKafkaSidebar, buildSidebar, loadKafkaRegistry, loadRegistry, stripNonSearchableContent } from '../scripts/content.mjs'
+import { buildPostgresSidebar, loadPostgresRegistry, buildKafkaSidebar, buildSidebar, loadKafkaRegistry, loadRegistry, stripNonSearchableContent } from '../scripts/content.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const { topics, exercises } = loadRegistry({ root })
+const postgresTopics = loadPostgresRegistry({ root })
 const kafkaTopics = loadKafkaRegistry({ root })
 const topicsBySourcePath = new Map(topics.map((topic) => [`go/${topic.group}/${topic.id}.md`, topic]))
 const kafkaTopicsBySourcePath = new Map(kafkaTopics.map((topic) => [`kafka/${topic.id}.md`, topic]))
@@ -12,7 +13,7 @@ const kafkaTopicsBySourcePath = new Map(kafkaTopics.map((topic) => [`kafka/${top
 export default defineConfig({
   lang: 'ru-RU',
   title: 'Go и backend',
-  description: 'Локальный справочник по Go, backend-разработке и Kafka.',
+  description: 'Локальный справочник по Go, backend-разработке, Kafka и PostgreSQL.',
   cleanUrls: true,
   lastUpdated: false,
   markdown: {
@@ -26,12 +27,14 @@ export default defineConfig({
       { text: 'Главная', link: '/' },
       { text: 'Go', link: '/go/' },
       { text: 'Kafka', link: '/kafka/' },
+      { text: 'PostgreSQL', link: '/postgres/' },
       { text: 'Практика', link: '/practice/' },
       { text: 'Источники', link: '/sources/' },
       { text: 'Дорожная карта', link: '/roadmap' },
     ],
     sidebar: {
       '/go/': buildSidebar({ root }),
+      '/postgres/': [buildPostgresSidebar({ root }), { text: 'Лаборатория и задачи', items: [{ text: 'Запуск лаборатории', link: '/postgres/lab' }, { text: 'Интервью-практика', link: '/postgres/practice/' }] }],
       '/kafka/': [
         buildKafkaSidebar({ root }),
         {
@@ -116,6 +119,12 @@ export default defineConfig({
     if (topic) {
       pageData.frontmatter.topicSummary = topic.summary
       pageData.frontmatter.goVersion = topic.goVersion
+    }
+    const postgresTopic = postgresTopics.find((topic) => sourcePath === `postgres/${topic.id}.md`)
+    if (postgresTopic) {
+      pageData.frontmatter.topicSummary = postgresTopic.summary
+      pageData.frontmatter.postgresVersion = postgresTopic.postgresVersion
+      pageData.frontmatter.reviewedAt = postgresTopic.reviewedAt
     }
     const kafkaTopic = kafkaTopicsBySourcePath.get(sourcePath)
     if (kafkaTopic) {

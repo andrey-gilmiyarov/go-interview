@@ -1,0 +1,109 @@
+[
+  {
+    "id": "storage-mvcc",
+    "title": "Хранение и MVCC",
+    "summary": "Версии строк, snapshots и причины отложенной очистки.",
+    "order": 1,
+    "postgresVersion": "17.11",
+    "reviewedAt": "2026-10-03",
+    "sources": [
+      "https://www.postgresql.org/docs/17/routine-vacuuming.html",
+      "https://www.postgresql.org/docs/17/mvcc.html",
+      "https://www.postgresql.org/docs/17/storage-hot.html"
+    ]
+  },
+  {
+    "id": "transactions-isolation",
+    "title": "Транзакции и изоляция",
+    "summary": "Расписания конкурентных операций и границы retry.",
+    "order": 2,
+    "postgresVersion": "17.11",
+    "reviewedAt": "2026-10-03",
+    "sources": [
+      "https://www.postgresql.org/docs/17/transaction-iso.html",
+      "https://www.postgresql.org/docs/17/mvcc-serialization-failure-handling.html",
+      "https://www.postgresql.org/docs/17/tutorial-transactions.html"
+    ]
+  },
+  {
+    "id": "locks",
+    "title": "Блокировки и конкурентная работа",
+    "summary": "Диагностика ожидания, deadlock и координация workers.",
+    "order": 3,
+    "postgresVersion": "17.11",
+    "reviewedAt": "2026-10-03",
+    "sources": [
+      "https://www.postgresql.org/docs/17/explicit-locking.html",
+      "https://www.postgresql.org/docs/17/sql-select.html",
+      "https://www.postgresql.org/docs/17/monitoring-stats.html"
+    ]
+  },
+  {
+    "id": "indexes",
+    "title": "Индексы: путь чтения и цена записи",
+    "summary": "Выбор индекса по форме запроса и характеристикам данных.",
+    "order": 4,
+    "postgresVersion": "17.11",
+    "reviewedAt": "2026-10-03",
+    "sources": [
+      "https://www.postgresql.org/docs/17/indexes.html",
+      "https://www.postgresql.org/docs/17/indexes-multicolumn.html",
+      "https://www.postgresql.org/docs/17/indexes-index-only-scans.html",
+      "https://www.postgresql.org/docs/17/indexes-partial.html"
+    ]
+  },
+  {
+    "id": "query-plans",
+    "title": "Планировщик и диагностика запросов",
+    "summary": "От наблюдаемой работы к проверяемой гипотезе оптимизации.",
+    "order": 5,
+    "postgresVersion": "17.11",
+    "reviewedAt": "2026-10-03",
+    "sources": [
+      "https://www.postgresql.org/docs/17/using-explain.html",
+      "https://www.postgresql.org/docs/17/planner-stats.html",
+      "https://www.postgresql.org/docs/17/runtime-config-resource.html"
+    ]
+  },
+  {
+    "id": "schema-integrity",
+    "title": "Схема и целостность",
+    "summary": "Ограничения, типы и идемпотентная запись при конкуренции.",
+    "order": 6,
+    "postgresVersion": "17.11",
+    "reviewedAt": "2026-10-03",
+    "sources": [
+      "https://www.postgresql.org/docs/17/ddl-constraints.html",
+      "https://www.postgresql.org/docs/17/sql-insert.html",
+      "https://www.postgresql.org/docs/17/datatype-datetime.html",
+      "https://www.postgresql.org/docs/17/datatype-json.html"
+    ]
+  },
+  {
+    "id": "go-access",
+    "title": "PostgreSQL из Go",
+    "summary": "Пул, транзакции, отмена и классификация ошибок в pgx.",
+    "order": 7,
+    "postgresVersion": "17.11",
+    "reviewedAt": "2026-10-03",
+    "sources": [
+      "https://pkg.go.dev/github.com/jackc/pgx/v5@v5.11.0/pgxpool",
+      "https://pkg.go.dev/github.com/jackc/pgx/v5@v5.11.0",
+      "https://pkg.go.dev/database/sql"
+    ]
+  },
+  {
+    "id": "operations-migrations",
+    "title": "Миграции и эксплуатация",
+    "summary": "Изменение схемы под нагрузкой и границы подтверждения записи.",
+    "order": 8,
+    "postgresVersion": "17.11",
+    "reviewedAt": "2026-10-03",
+    "sources": [
+      "https://www.postgresql.org/docs/17/sql-altertable.html",
+      "https://www.postgresql.org/docs/17/sql-createindex.html",
+      "https://www.postgresql.org/docs/17/wal-intro.html",
+      "https://www.postgresql.org/docs/17/runtime-config-wal.html"
+    ]
+  }
+]

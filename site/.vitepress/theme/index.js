@@ -11,10 +11,11 @@ export default {
     return h(DefaultTheme.Layout, null, {
       'doc-before': () => {
         const metadata = frontmatter.value
-        if (!metadata.topicSummary || !metadata.goVersion) return null
+        if (!metadata.topicSummary || !(metadata.goVersion || metadata.postgresVersion)) return null
         return h(TopicMeta, {
           summary: metadata.topicSummary,
           goVersion: metadata.goVersion,
+          postgresVersion: metadata.postgresVersion,
         })
       },
     })
