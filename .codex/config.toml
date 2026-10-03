@@ -1,17 +1,17 @@
 # Project-level Codex runtime configuration.
 #
 # Intended topology:
-#   User-selected root model (Astra recommended; Lead / architect / reviewer)
-#            |
-#            +--> GPT-6 Luna worker(s)
+#   GPT-6 Astra root -> GPT-6.1 Sol / high worker(s)
+#   Any other root model -> performs all work itself, without subagents.
 #
 # AGENTS.md and docs/agent-workflow.md define the workflow policy.
-# This file configures the runtime defaults and registers the Luna worker.
+# This file configures the runtime defaults and registers the Sol worker.
+# Model-dependent routing is instruction policy, not a TOML conditional.
 # The root model and reasoning effort are selected by the user in the app for
 # each session; this project does not pin them.
 
 [agents]
-# Enable multi-agent execution for this project.
+# Make multi-agent tools available. AGENTS.md permits their use only by Astra.
 enabled = true
 
 # Allow a small amount of parallel implementation work.
@@ -19,13 +19,13 @@ enabled = true
 max_concurrent_threads_per_session = 4
 
 # Fallback routing for spawned agents without explicit model/effort selection.
-# Implementation tasks still require explicit agent_type="luna-worker".
-default_subagent_model = "gpt-6-luna"
-default_subagent_reasoning_effort = "max"
+# Astra implementation tasks require explicit agent_type="sol-worker".
+default_subagent_model = "gpt-6.1-sol"
+default_subagent_reasoning_effort = "high"
 
 # Register the explicit implementation-worker role.
 #
 # Relative paths are resolved from this config.toml in current Codex builds.
-[agents.luna-worker]
-description = "Bounded implementation worker. Explicitly dispatched by the Lead and reused for review-driven rework."
-config_file = "agents/luna-worker.toml"
+[agents.sol-worker]
+description = "Astra's implementation worker. Makes compatible architecture/API/schema decisions within task scope; obtains Astra approval for breaking changes. Reused for review-driven rework."
+config_file = "agents/sol-worker.toml"

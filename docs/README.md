@@ -29,5 +29,5 @@
 
 ## Рабочий процесс
 
-- [Lead/Luna workflow](agent-workflow.md)
+- [Astra/Sol workflow](agent-workflow.md)
 - [Подготовка материалов](content-authoring.md)

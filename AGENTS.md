@@ -1,37 +1,55 @@
 # Repository agent map
 
-This repository uses a hierarchical Lead/Luna workflow. Astra is the
-recommended Lead model when selected in the ChatGPT app; the root model and
-reasoning effort remain per-session choices. Luna implements bounded tasks.
-The workflow is defined in [docs/agent-workflow.md](docs/agent-workflow.md).
+This repository selects its workflow from the chat's active root model:
+`gpt-6-astra` uses Astra/Sol delegation; any other root model performs all work
+itself without subagents. Root model and reasoning effort remain user-selected
+per session. The detailed routing, task contract, and lifecycle are in
+[docs/agent-workflow.md](docs/agent-workflow.md).
 
 ## Operating rules
 
-- The Lead owns requirements, research, architecture and product decisions,
-  task decomposition, dependencies, acceptance criteria, dispatch, and review.
-- For implementation, dispatch explicitly with `agent_type="luna-worker"` and
-  `fork_turns="none"`. Give Luna a complete contract with objective, approved
-  decisions, exact file ownership, constraints, dependencies, criteria, and
-  required validation. Runtime defaults do not replace explicit role dispatch.
-- The Lead decides architecture, product, public API, and schema changes. Luna
-  may implement those decisions only when they are explicitly approved in the
-  scoped contract. Unexpected or out-of-scope changes require `BLOCKED`.
-- Do not add software dependencies without explicit user authorization.
-- Parallel tasks require satisfied dependencies and non-overlapping file
-  ownership. The Lead serializes or coordinates shared-file changes. Preserve
-  other workers' edits and staging state.
-- For non-trivial work, follow RESEARCH -> DESIGN -> PLAN. Wait at APPROVAL
-  only when the user requests it or an applicable rule requires it.
-- A Luna `READY_FOR_REVIEW` report moves the task to REVIEW. If changes are
-  needed, send REWORK to the same worker with `followup_task`; do not replace
-  the worker for ordinary fixes. The Lead alone marks work ACCEPTED, then
-  performs the final integration review.
-- Read-only answers and repository research do not require delegation.
+- Routing applies to the root agent, not to an already-dispatched worker.
+  Use reliable current session/model context; do not infer the root model from
+  worker defaults, previous chats, or self-identification without evidence.
+  If the active root model is unknown, work independently without delegation.
+- Only an Astra root uses the subagent workflow. Every other root model owns
+  research, design, implementation, validation, and review itself. Do not
+  spawn implementers, explorers, or reviewers, or create other chats as a
+  substitute for subagents in this mode. This policy takes precedence over
+  skill recommendations to delegate; direct user instructions take priority.
+- Astra owns the overall plan, task decomposition, dependencies, acceptance
+  criteria, cross-task architecture, escalation, review, and final acceptance.
+  Routine scoped implementation is delegated to `sol-worker`; read-only
+  answers and repository research do not require delegation.
+- For non-trivial changes the responsible root model follows
+  RESEARCH -> DESIGN -> PLAN -> EXECUTION -> VALIDATION -> REVIEW
+  -> FINAL INTEGRATION REVIEW. Wait at APPROVAL only when the user requests
+  it or an applicable rule requires it.
+- Every Sol task has an explicit scope, constraints, dependencies, decision
+  authority, acceptance criteria, and required validation.
+- Astra dispatches implementation with `agent_type="sol-worker"` and
+  `fork_turns="none"`, supplying a self-contained task contract. This isolates
+  conversation history; the worker still shares the repository workspace.
+- Sol may research and choose architecture, API, contract, and schema changes
+  independently within task scope when they preserve compatibility and the
+  approved product requirements. Sol explains decisions and validation in its
+  report. Breaking changes require explicit Astra approval before implementation;
+  approved breaking changes must be recorded in the task contract or rework
+  instructions. Sol must not expand scope or delegate further. Adding
+  dependencies still requires explicit user authorization.
+- Astra reviews the actual diff and test evidence; only Astra marks delegated work
+  accepted.
+- Review fixes return through `followup_task` to the same Sol worker session.
+  Do not replace the worker for ordinary rework.
+- Sol escalates material requirement ambiguity, unapproved breaking changes,
+  cross-task architecture conflicts, required changes beyond scope, unauthorized
+  dependencies, or failures that invalidate the agreed constraints. Compatible
+  decisions within task scope do not require individual approval.
 
 ## Plan file convention
 
-- The Lead creates a new, uniquely named `YYYY-MM-DD-topic.md` file in
-  `docs/plans/` for each plan; never create or overwrite a shared
+- The responsible root model creates a new, uniquely named
+  `YYYY-MM-DD-topic.md` file in `docs/plans/` for each plan; never create or overwrite a shared
   `docs/active-plan.md`.
 - Link every plan from [docs/README.md](docs/README.md). Keep a completed plan
   at the same path and update its status.
